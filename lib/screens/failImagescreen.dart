@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../widgets/fullScreenImage.dart';
+import 'dart:async';
 
 class failImagescreen extends StatefulWidget {
   @override
@@ -12,6 +13,26 @@ class _failImagescreenState extends State<failImagescreen> {
   int failCount = 0;
   List<String> failImages = [];
   final String serverIp = "192.168.0.126"; // Flask 서버 IP
+  int? currentStatus; // null: 로딩 중, 0: Fail, 1: Pass
+  Timer? _statusTimer;
+
+  Future<void> fetchCurrentStatus() async {
+    try {
+      var response = await http.get(
+        Uri.parse("http://$serverIp:5000/get_d1000_status"),
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          currentStatus = jsonDecode(response.body)["status"];
+        });
+      } else {
+        print("⚠️ 상태 조회 실패: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("🔥 상태 조회 예외 발생: $e");
+    }
+  }
 
   Future<void> fetchFailCount() async {
     try {
@@ -63,6 +84,18 @@ class _failImagescreenState extends State<failImagescreen> {
     super.initState();
     fetchFailCount();
     fetchFailImages();
+    fetchCurrentStatus();
+
+    _statusTimer = Timer.periodic(Duration(seconds: 3), (_) {
+      if (!mounted) return; // 위젯이 이미 dispose된 상태면 실행 안 함
+      fetchCurrentStatus();
+    });
+  }
+
+  @override
+  void dispose() {
+    _statusTimer?.cancel(); // 타이머 종료
+    super.dispose();
   }
 
   @override
@@ -138,6 +171,32 @@ class _failImagescreenState extends State<failImagescreen> {
                   ),
                 );
               },
+            ),
+          ),
+          SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              children: [
+                Text(
+                  "현재 상태: ",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                if (currentStatus == null)
+                  CircularProgressIndicator()
+                else
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: currentStatus == 1 ? Colors.green : Colors.red,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      currentStatus == 1 ? "양호" : "불량",
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    ),
+                  ),
+              ],
             ),
           ),
         ],
