@@ -57,7 +57,7 @@ class _PLCControlScreenState extends State<PLCControlScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("D100 제어")),
+      appBar: AppBar(title: Text("PLC 제어")),
       body: Padding(
         padding: EdgeInsets.all(20),
         child: Column(

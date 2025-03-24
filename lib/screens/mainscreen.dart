@@ -75,7 +75,7 @@ class mainscreen extends StatelessWidget {
                       ),
                       SizedBox(height: 15),
                       Transform.translate(
-                        offset: Offset(-40, 0),
+                        offset: Offset(-20, 0),
                         child: Container(
                           height: 60,
                           width: 300,
@@ -177,9 +177,7 @@ class mainscreen extends StatelessWidget {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (context) => cctvstreamscreen(),
-                          ),
+                          MaterialPageRoute(builder: (context) => cctvScreen()),
                         );
                       },
                       icon: Icon(Icons.tv),

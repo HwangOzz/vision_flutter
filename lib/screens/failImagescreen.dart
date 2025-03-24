@@ -102,7 +102,23 @@ class _failImagescreenState extends State<failImagescreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color.fromARGB(208, 245, 254, 245),
-      appBar: AppBar(title: Text("불량 이미지 목록"), backgroundColor: Colors.green),
+      appBar: AppBar(
+        title: Text("불량 이미지 목록"),
+        backgroundColor: Colors.green,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: () {
+              setState(() {
+                failImages.clear(); // 이미지 리스트 초기화
+              });
+              fetchFailCount();
+              fetchFailImages();
+              fetchCurrentStatus();
+            },
+          ),
+        ],
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
