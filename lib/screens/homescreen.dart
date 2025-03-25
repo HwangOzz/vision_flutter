@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vision_flutter/widgets/appbarbutton.dart';
+import 'package:vision_flutter/widgets/member_dialog.dart';
 
 class Homescreen extends StatefulWidget {
   const Homescreen({super.key});
@@ -9,6 +10,28 @@ class Homescreen extends StatefulWidget {
 }
 
 class _HomescreenState extends State<Homescreen> {
+  void _showMemberDialog() {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true, // 바깥 탭하면 닫히게
+      barrierLabel: '',
+      barrierColor: Colors.transparent, // ✅ 배경 어두워지는 거 제거
+      transitionDuration: Duration(milliseconds: 200),
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return Center(
+          child: MemberDialog(
+            memberImages: [
+              'assets/member1.png',
+              'assets/member2.png',
+              'assets/member3.png',
+            ],
+            memberNames: ['조장 : 함상현', '조원 : 지정재\nE-PLAN', '조원 : 김수현\nE-PLAN'],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,13 +55,17 @@ class _HomescreenState extends State<Homescreen> {
             ),
             Transform.translate(
               offset: Offset(6, 39.7),
-              child: Column(
-                children: [
-                  SizedBox(width: 20),
-                  Text("조원 소개", style: TextStyle(fontSize: 10)),
-                ],
+              child: GestureDetector(
+                onTap: _showMemberDialog,
+                child: Column(
+                  children: [
+                    SizedBox(width: 20),
+                    Text("조원 소개", style: TextStyle(fontSize: 10)),
+                  ],
+                ),
               ),
             ),
+
             Appbarbutton(text1: "개발 과정", icon1: Icons.headset_mic),
             Appbarbutton(text1: "설정", icon1: Icons.settings),
           ],
@@ -52,7 +79,7 @@ class _HomescreenState extends State<Homescreen> {
         ),
         padding: EdgeInsets.all(7),
         child: FloatingActionButton(
-          onPressed: () {},
+          onPressed: _showMemberDialog,
           backgroundColor: const Color.fromARGB(255, 27, 26, 26),
           shape: CircleBorder(),
           elevation: 0,
@@ -65,6 +92,22 @@ class _HomescreenState extends State<Homescreen> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       body: Stack(
         children: [
+          // ✅ grassimage를 제일 아래로!
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              height: 400,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage("assets/grassimage.png"),
+                  fit: BoxFit.fill,
+                ),
+              ),
+            ),
+          ),
+
           Column(
             children: [
               Container(
@@ -76,16 +119,16 @@ class _HomescreenState extends State<Homescreen> {
                   ),
                 ),
               ),
-              // 필요하다면 여기 다른 위젯 추가
             ],
           ),
+
           Positioned(
-            top: 30, // 상단에서 거리
-            right: 16, // 오른쪽에서 거리
+            top: 30,
+            right: 16,
             child: IconButton(
               icon: Icon(
                 Icons.arrow_back,
-                color: const Color.fromARGB(255, 55, 54, 54),
+                color: Color.fromARGB(255, 55, 54, 54),
               ),
               onPressed: () {
                 Navigator.pop(context);
