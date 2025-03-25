@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vision_flutter/screens/Plccontrolscreen.dart';
 import 'package:vision_flutter/screens/cctvstreamscreen.dart';
+import 'package:vision_flutter/screens/homescreen.dart';
 import 'FailImageScreen.dart';
 
 class mainscreen extends StatelessWidget {
@@ -76,31 +77,43 @@ class mainscreen extends StatelessWidget {
                       SizedBox(height: 15),
                       Transform.translate(
                         offset: Offset(-20, 0),
-                        child: Container(
-                          height: 60,
-                          width: 300,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                            color: const Color.fromARGB(255, 41, 37, 245),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.home_outlined,
-                                size: 30,
-                                color: Colors.white,
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Homescreen(),
                               ),
-                              SizedBox(width: 10),
-                              Text(
-                                "메인화면 바로가기",
-                                style: TextStyle(
-                                  fontSize: 24,
+                            );
+                          },
+                          child: Container(
+                            height: 60,
+                            width: 300,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10),
+                              ),
+                              color: const Color.fromARGB(255, 41, 37, 245),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.home_outlined,
+                                  size: 30,
                                   color: Colors.white,
-                                  fontWeight: FontWeight.w500,
                                 ),
-                              ),
-                            ],
+                                SizedBox(width: 10),
+                                Text(
+                                  "메인화면 바로가기",
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),

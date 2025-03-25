@@ -8,8 +8,84 @@ class cctvScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('CCTV 실시간')),
-      body: Mjpeg(stream: streamUrl, isLive: true),
+      backgroundColor: Color.fromARGB(255, 191, 222, 191),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(90),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.teal[400],
+            borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 6,
+                offset: Offset(0, 3),
+              ),
+            ],
+          ),
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.tv, color: Colors.white),
+                      SizedBox(width: 10),
+                      Text(
+                        "CCTV",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(width: 240),
+                      IconButton(
+                        icon: Icon(Icons.arrow_back, color: Colors.white),
+                        onPressed: () {
+                          Navigator.pop(context); // 이전 화면으로 이동
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+      body: Column(
+        children: [
+          SizedBox(height: 50),
+          Container(
+            decoration: BoxDecoration(
+              color: Color.fromARGB(255, 243, 230, 230),
+            ),
+            height: 250,
+            width: 600,
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Color.fromARGB(255, 191, 222, 191),
+                ),
+                child: Mjpeg(stream: streamUrl, isLive: true),
+              ),
+            ),
+          ),
+          Container(
+            height: 350,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/mountain.png"),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

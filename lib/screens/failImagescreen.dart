@@ -101,24 +101,67 @@ class _failImagescreenState extends State<failImagescreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(208, 245, 254, 245),
-      appBar: AppBar(
-        title: Text("불량 이미지 목록"),
-        backgroundColor: Colors.green,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.refresh),
-            onPressed: () {
-              setState(() {
-                failImages.clear(); // 이미지 리스트 초기화
-              });
-              fetchFailCount();
-              fetchFailImages();
-              fetchCurrentStatus();
-            },
+      backgroundColor: Color.fromARGB(255, 191, 222, 191),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(90),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.teal[400],
+            borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 6,
+                offset: Offset(0, 3),
+              ),
+            ],
           ),
-        ],
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.image_outlined, color: Colors.white),
+                      SizedBox(width: 10),
+                      Text(
+                        "불량 이미지 목록",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Spacer(),
+                  IconButton(
+                    icon: Icon(Icons.arrow_back, color: Colors.white),
+                    onPressed: () {
+                      Navigator.pop(context); // 이전 화면으로 이동
+                    },
+                  ),
+
+                  IconButton(
+                    icon: Icon(Icons.refresh, color: Colors.white),
+                    onPressed: () {
+                      setState(() {
+                        failImages.clear();
+                      });
+                      fetchFailCount();
+                      fetchFailImages();
+                      fetchCurrentStatus();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
+
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

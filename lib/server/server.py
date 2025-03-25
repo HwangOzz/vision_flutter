@@ -28,40 +28,52 @@ def vision_socket_thread():
     while True:
         try:
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client_socket:
+                client_socket.settimeout(10)  # 타임아웃 설정
                 client_socket.connect((VISION_IP, VISION_PORT))
                 print(f"✅ 비전 센서 연결됨! (IP: {VISION_IP}, 포트: {VISION_PORT})")
 
+                buffer = ""  # 받은 데이터 누적용
+
                 while True:
-                    data = client_socket.recv(1024).decode('utf-8').strip()
-                    if not data:
-                        print("⚠️ 연결 종료됨")
-                        break
+                    try:
+                        data = client_socket.recv(1024).decode('utf-8')
+                        if not data:
+                            print("⚠️ 비전 센서 응답 없음 (데이터 없음)")
+                            time.sleep(1)
+                            continue
 
-                    results = data.split(",")
-                    for result in results:
-                        result = result.strip()
+                        buffer += data
+                        # 데이터 끝에 개행(\n)이나 명확한 구분자가 있다면 분리
+                        results = buffer.strip().split(",")
+                        buffer = ""  # 버퍼 초기화
 
-                        if "1P" in result:
-                            current_result = 1
-                        elif "1F" in result:
-                            current_result = 0
-                        else:
-                            current_result = None
+                        for result in results:
+                            result = result.strip()
 
-                        if current_result is not None and current_result != previous_result:
-                            print(f"📌 검사 결과 변경됨! {previous_result} ➡ {current_result}")
-                            try:
-                                plc = create_plc_connection()
-                                plc.batchwrite_wordunits("D1000", [current_result])
-                                plc.close()
-                                print(f"📡 D1000 = {current_result} 으로 전송 완료!")
-                            except Exception as e:
-                                print(f"❌ D1000 전송 실패: {e}")
-                            previous_result = current_result
-                    time.sleep(1)
+                            if "1P" in result:
+                                current_result = 1
+                            elif "1F" in result:
+                                current_result = 0
+                            else:
+                                current_result = None
+
+                            if current_result is not None and current_result != previous_result:
+                                print(f"📌 검사 결과 변경됨! {previous_result} ➡ {current_result}")
+                                try:
+                                    plc = create_plc_connection()
+                                    plc.batchwrite_wordunits("D1000", [current_result])
+                                    plc.close()
+                                    print(f"📡 D1000 = {current_result} 으로 전송 완료!")
+                                except Exception as e:
+                                    print(f"❌ D1000 전송 실패: {e}")
+                                previous_result = current_result
+                    except socket.timeout:
+                        print("⏳ 비전 센서 응답 대기 중...")
+                        continue
+
         except Exception as e:
             print(f"🚨 소켓 연결 오류: {e}")
-            time.sleep(5)  # 재시도 대기
+            time.sleep(5)
 
 # ====== Flask API ======
 
@@ -99,8 +111,26 @@ def get_d100():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route("/set_bit", methods=["POST"])
+def set_bit():
+    try:
+        data = request.get_json()
+        address = data.get("address")
+        value = data.get("value")
+
+        if not address or value not in [0, 1]:
+            return jsonify({"error": "Invalid address or value"}), 400
+
+        plc = create_plc_connection()
+        plc.batchwrite_bitunits(headdevice=address, values=[value])
+        plc.close()
+
+        return jsonify({"success": True, "message": f"{address} = {value} 설정됨"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 # ====== 이미지 관련 ======
-FAIL_IMAGE_FOLDER = r"\\10.10.24.100\VisionSensorImages\Fail"
+FAIL_IMAGE_FOLDER = r"\\10.10.24.194\VisionSensorImages\Fail"
 
 @app.route('/get_fail_count', methods=['GET'])
 def get_fail_count():
