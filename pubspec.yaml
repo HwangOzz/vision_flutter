@@ -38,6 +38,7 @@ dependencies:
   flutter_vlc_player: ^7.4.3
   flutter_mjpeg: ^2.0.0
   google_fonts: ^4.0.4
+  mobile_scanner: ^6.0.7
   
 dev_dependencies:
   flutter_test:

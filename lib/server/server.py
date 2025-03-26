@@ -11,7 +11,7 @@ CORS(app)
 VISION_IP = "10.10.24.230"
 VISION_PORT = 2005
 
-PLC_IP = "192.168.3.250"
+PLC_IP = "192.168.3.39"
 PLC_PORT = 2001
 
 # ====== PLC 연결 함수 ======
@@ -61,11 +61,11 @@ def vision_socket_thread():
                                 print(f"📌 검사 결과 변경됨! {previous_result} ➡ {current_result}")
                                 try:
                                     plc = create_plc_connection()
-                                    plc.batchwrite_wordunits("D1000", [current_result])
+                                    plc.batchwrite_wordunits("D1900", [current_result])
                                     plc.close()
-                                    print(f"📡 D1000 = {current_result} 으로 전송 완료!")
+                                    print(f"📡 D1900 = {current_result} 으로 전송 완료!")
                                 except Exception as e:
-                                    print(f"❌ D1000 전송 실패: {e}")
+                                    print(f"❌ D1900 전송 실패: {e}")
                                 previous_result = current_result
                     except socket.timeout:
                         print("⏳ 비전 센서 응답 대기 중...")
@@ -77,11 +77,11 @@ def vision_socket_thread():
 
 # ====== Flask API ======
 
-@app.route("/get_d1000_status", methods=["GET"])
-def get_d1000_status():
+@app.route("/get_D1900_status", methods=["GET"])
+def get_D1900_status():
     try:
         plc = create_plc_connection()
-        value = plc.batchread_wordunits("D1000", 1)[0]
+        value = plc.batchread_wordunits("D1900", 1)[0]
         plc.close()
         return jsonify({"status": int(value)}), 200
     except Exception as e:

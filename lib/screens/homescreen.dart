@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:vision_flutter/screens/qr_scanner_screen.dart';
 import 'package:vision_flutter/widgets/appbarbutton.dart';
+import 'package:vision_flutter/widgets/boundaryline.dart';
 import 'package:vision_flutter/widgets/member_dialog.dart';
 
 class Homescreen extends StatefulWidget {
@@ -10,40 +12,73 @@ class Homescreen extends StatefulWidget {
 }
 
 class _HomescreenState extends State<Homescreen> {
+  bool _showBoundaryLine = false;
+
+  void _toggleBoundaryLine() {
+    setState(() {
+      _showBoundaryLine = !_showBoundaryLine;
+    });
+  }
+
   void _showMemberDialog() {
+    setState(() {
+      _showBoundaryLine = true; // 같이 띄우기
+    });
+
     showGeneralDialog(
       context: context,
-      barrierDismissible: true, // 바깥 탭하면 닫히게
+      barrierDismissible: true,
       barrierLabel: '',
-      barrierColor: Colors.transparent, // ✅ 배경 어두워지는 거 제거
+      barrierColor: Colors.transparent,
       transitionDuration: Duration(milliseconds: 200),
       pageBuilder: (context, animation, secondaryAnimation) {
-        return Center(
-          child: MemberDialog(
-            memberImages: [
-              'assets/member1.png',
-              'assets/member2.png',
-              'assets/member3.png',
-              'assets/member4.png',
-              'assets/member5.png',
-              'assets/member6.png',
-              'assets/member7.png',
-              'assets/member8.png',
-            ],
-            memberNames: [
-              '조장 : 함상현',
-              '조원 : 지정재\nE-PLAN',
-              '조원 : 김수현\nE-PLAN',
-              '조원 : 남현수\nSCADA',
-              '조원 : 임윤재\nSCADA',
-              '조원 : 황성현\nSCADA',
-              '조원 : 권익환\nSCADA',
-              '조원 : 이경준\nSCADA',
-            ],
+        return WillPopScope(
+          onWillPop: () async {
+            setState(() {
+              _showBoundaryLine = false; // 뒤로가기 시 같이 끄기
+            });
+            return true;
+          },
+          child: GestureDetector(
+            onTap: () {
+              Navigator.of(context).pop();
+              setState(() {
+                _showBoundaryLine = false; // 바깥 탭해서 닫을 때 같이 끄기
+              });
+            },
+            child: Center(
+              child: MemberDialog(
+                memberImages: [
+                  'assets/member1.png',
+                  'assets/member2.png',
+                  'assets/member3.png',
+                  'assets/member4.png',
+                  'assets/member5.png',
+                  'assets/member6.png',
+                  'assets/member7.png',
+                  'assets/member8.png',
+                ],
+                memberNames: [
+                  '조장 : 함상현',
+                  '조원 : 지정재\nE-PLAN',
+                  '조원 : 김수현\nE-PLAN',
+                  '조원 : 남현수\nSCADA',
+                  '조원 : 임윤재\nSCADA',
+                  '조원 : 황성현\nSCADA',
+                  '조원 : 권익환\nSCADA',
+                  '조원 : 이경준\nSCADA',
+                ],
+              ),
+            ),
           ),
         );
       },
-    );
+    ).then((_) {
+      // 다이얼로그 닫힌 후에도 꺼지게 보장
+      setState(() {
+        _showBoundaryLine = false;
+      });
+    });
   }
 
   @override
@@ -65,12 +100,26 @@ class _HomescreenState extends State<Homescreen> {
             ),
             Transform.translate(
               offset: Offset(15, 0),
-              child: Appbarbutton(text1: "QR", icon1: Icons.qr_code),
+              child: Appbarbutton(
+                text1: "QR",
+                icon1: Icons.qr_code,
+                onTap: () async {
+                  print("QR 버튼 눌림");
+                  final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const QrScannerScreen()),
+                  );
+
+                  if (result != null) {
+                    print("QR 코드 결과: $result");
+                  }
+                },
+              ),
             ),
             Transform.translate(
               offset: Offset(6, 39.7),
               child: GestureDetector(
-                onTap: _showMemberDialog,
+                onTap: _toggleBoundaryLine,
                 child: Column(
                   children: [
                     SizedBox(width: 20),
@@ -135,7 +184,8 @@ class _HomescreenState extends State<Homescreen> {
               ),
             ],
           ),
-
+          if (_showBoundaryLine)
+            Positioned(bottom: -15, left: 120, child: Boundaryline()),
           Positioned(
             top: 30,
             right: 16,

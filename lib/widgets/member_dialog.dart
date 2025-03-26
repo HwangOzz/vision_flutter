@@ -40,11 +40,11 @@ class _MemberDialogState extends State<MemberDialog> {
       child: GestureDetector(
         onTap: _goToNextPage, // 👉 화면 아무데나 탭하면 다음 페이지로
         child: Padding(
-          padding: const EdgeInsets.only(top: 100),
+          padding: const EdgeInsets.only(top: 20),
           child: Center(
             child: SizedBox(
               width: MediaQuery.of(context).size.width * 0.8,
-              height: 400,
+              height: 450,
               child: PageView.builder(
                 controller: _pageController,
                 physics: NeverScrollableScrollPhysics(), // 👉 드래그 금지
@@ -56,12 +56,12 @@ class _MemberDialogState extends State<MemberDialog> {
                       Text(
                         widget.memberNames[index], // 조원 이름!
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.doHyeon(
+                        style: GoogleFonts.jua(
                           fontSize: 28,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      SizedBox(height: 10), // 텍스트와 이미지 사이 간격
+                      SizedBox(height: 60), // 텍스트와 이미지 사이 간격
                       Expanded(
                         child: Image.asset(
                           widget.memberImages[index],
