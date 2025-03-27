@@ -128,6 +128,19 @@ def set_bit():
         return jsonify({"success": True, "message": f"{address} = {value} 설정됨"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+@app.route("/get_m_bits", methods=["GET"])
+def get_m_bits():
+    try:
+        plc = create_plc_connection()
+        values = plc.batchread_bitunits("M0", 10)  # M0 ~ M9까지 10개 읽기
+        plc.close()
+
+        result = {f"M{i}": int(values[i]) for i in range(10)}  # 딕셔너리 형태로 변환
+        return jsonify(result), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 # ====== 이미지 관련 ======
 FAIL_IMAGE_FOLDER = r"\\10.10.24.194\VisionSensorImages\Fail"
@@ -154,6 +167,24 @@ def get_image(filename):
             img.save(img_io, format="PNG")
             img_io.seek(0)
         return Response(img_io, mimetype="image/png")
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+# ====== QR코드 관련 ======
+@app.route("/set_word", methods=["POST"])
+def set_word():
+    try:
+        data = request.get_json()
+        address = data.get("address")
+        value = data.get("value")
+
+        if not address or value is None:
+            return jsonify({"error": "Invalid address or value"}), 400
+
+        plc = create_plc_connection()
+        plc.batchwrite_wordunits(address, [int(value)])
+        plc.close()
+
+        return jsonify({"success": True, "message": f"{address} = {value} 설정됨"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

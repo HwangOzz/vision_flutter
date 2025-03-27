@@ -19,6 +19,22 @@ class _PLCControlScreenState extends State<PLCControlScreen> {
   void initState() {
     super.initState();
     getD100();
+    getMBits();
+  }
+
+  Future<void> getMBits() async {
+    try {
+      final response = await http.get(Uri.parse("$serverUrl/get_m_bits"));
+      final responseData = jsonDecode(response.body);
+
+      setState(() {
+        for (int i = 0; i < 10; i++) {
+          mBitStates[i] = responseData["M$i"] == 1;
+        }
+      });
+    } catch (e) {
+      print("❌ M 비트 상태 조회 실패: $e");
+    }
   }
 
   Future<void> setD100(int value) async {

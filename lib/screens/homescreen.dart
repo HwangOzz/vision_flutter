@@ -3,6 +3,8 @@ import 'package:vision_flutter/screens/qr_scanner_screen.dart';
 import 'package:vision_flutter/widgets/appbarbutton.dart';
 import 'package:vision_flutter/widgets/boundaryline.dart';
 import 'package:vision_flutter/widgets/member_dialog.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class Homescreen extends StatefulWidget {
   const Homescreen({super.key});
@@ -13,6 +15,30 @@ class Homescreen extends StatefulWidget {
 
 class _HomescreenState extends State<Homescreen> {
   bool _showBoundaryLine = false;
+  void sendToPLC(String qrText) async {
+    try {
+      final parts = qrText.split(":");
+      if (parts.length != 2) return;
+
+      final address = parts[0]; // 예: D1901
+      final value = int.tryParse(parts[1]);
+      if (value == null) return;
+
+      final url = Uri.parse(
+        "http://192.168.0.126:5000/set_word",
+      ); // 👈 Flask 서버 IP로 수정
+
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"address": address, "value": value}),
+      );
+
+      print("✅ PLC 전송 완료: ${response.statusCode} - ${response.body}");
+    } catch (e) {
+      print("❌ PLC 전송 실패: $e");
+    }
+  }
 
   void _toggleBoundaryLine() {
     setState(() {
@@ -112,6 +138,7 @@ class _HomescreenState extends State<Homescreen> {
 
                   if (result != null) {
                     print("QR 코드 결과: $result");
+                    sendToPLC(result);
                   }
                 },
               ),
