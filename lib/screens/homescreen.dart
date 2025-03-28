@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vision_flutter/screens/orderlistpage.dart';
 import 'package:vision_flutter/screens/qr_scanner_screen.dart';
 import 'package:vision_flutter/widgets/appbarbutton.dart';
 import 'package:vision_flutter/widgets/boundaryline.dart';
@@ -122,7 +123,19 @@ class _HomescreenState extends State<Homescreen> {
           children: [
             Transform.translate(
               offset: Offset(12, 0),
-              child: Appbarbutton(text1: "HOME", icon1: Icons.home),
+              child: Appbarbutton(
+                text1: "MES",
+                icon1: Icons.online_prediction_rounded,
+                onTap: () async {
+                  final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => Orderlistpage()),
+                  );
+                  if (result != null) {
+                    sendToPLC(result);
+                  }
+                },
+              ),
             ),
             Transform.translate(
               offset: Offset(15, 0),
