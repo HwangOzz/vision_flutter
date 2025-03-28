@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vision_flutter/screens/developmentprocess.dart';
 import 'package:vision_flutter/screens/orderlistpage.dart';
 import 'package:vision_flutter/screens/qr_scanner_screen.dart';
 import 'package:vision_flutter/widgets/appbarbutton.dart';
@@ -169,7 +170,16 @@ class _HomescreenState extends State<Homescreen> {
               ),
             ),
 
-            Appbarbutton(text1: "개발 과정", icon1: Icons.headset_mic),
+            Appbarbutton(
+              text1: "개발 과정",
+              icon1: Icons.headset_mic,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => DevelopmentProcessPage()),
+                );
+              },
+            ),
             Appbarbutton(text1: "설정", icon1: Icons.settings),
           ],
         ),

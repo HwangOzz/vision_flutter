@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:vision_flutter/messcreens/plcpageview.dart';
+import 'package:vision_flutter/messcreens/proccesinfotab.dart';
+import 'package:vision_flutter/messcreens/processpageview.dart';
 import 'dart:async';
 import 'package:vision_flutter/widgets/remainingtime.dart';
 
@@ -99,11 +100,17 @@ class _OrderlistpageState extends State<Orderlistpage> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         appBar: AppBar(
           title: Text('MES 시스템'),
-          bottom: TabBar(tabs: <Widget>[Tab(text: '주문리스트'), Tab(text: 'PLC')]),
+          bottom: TabBar(
+            tabs: <Widget>[
+              Tab(text: '주문리스트'),
+              Tab(text: '공정 현황'),
+              Tab(text: '공정 정보'),
+            ],
+          ),
         ),
 
         body: TabBarView(
@@ -273,7 +280,8 @@ class _OrderlistpageState extends State<Orderlistpage> {
                 ),
               ],
             ),
-            PLCpageview(), // 두 번째 탭 화면
+            ProcessSimulationPage(), // 두 번째 탭 화면
+            ProcessInfoTab(), //세 번째 탭 화면
           ],
         ),
       ),

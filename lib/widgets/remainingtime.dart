@@ -46,6 +46,6 @@ class _RemainingTimeWidgetState extends State<RemainingTimeWidget> {
   Widget build(BuildContext context) {
     final min = _remaining ~/ 60;
     final sec = _remaining % 60;
-    return Text('⏱ 남은시간: ${min}분 ${sec}초');
+    return Text('⏱ 남은시간: $min분 $sec초');
   }
 }
