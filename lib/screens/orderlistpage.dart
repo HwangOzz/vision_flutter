@@ -20,46 +20,55 @@ class _OrderlistpageState extends State<Orderlistpage> {
     super.initState();
 
     Timer.periodic(Duration(seconds: 1), (timer) async {
-      final snapshot =
-          await orders
-              .orderBy('timestamp')
-              .where('status', whereIn: ['주문 접수됨', '공정 중'])
-              .get();
-
       final now = DateTime.now();
 
-      for (final doc in snapshot.docs) {
+      // 1. 공정 중인 주문이 있는지 먼저 확인
+      final processing =
+          await orders
+              .where('status', isEqualTo: '공정 중')
+              .orderBy('processingStarted')
+              .limit(1)
+              .get();
+
+      if (processing.docs.isNotEmpty) {
+        final doc = processing.docs.first;
         final data = doc.data();
-        final timestamp = (data['timestamp'] as Timestamp?)?.toDate();
-        final status = data['status'];
+        final started = (data['processingStarted'] as Timestamp?)?.toDate();
         final product = data['product'];
         final quantity = data['quantity'];
 
-        if (timestamp == null || product == null || quantity == null) continue;
+        if (started == null || product == null || quantity == null) return;
 
         final type = product.toString().replaceAll('배터리', '');
         final seconds = processTime[type]! * quantity;
+        final elapsed = now.difference(started).inSeconds;
 
-        if (status == '주문 접수됨') {
-          final elapsed = now.difference(timestamp).inSeconds;
-          if (elapsed >= 1) {
-            await orders.doc(doc.id).update({
-              'status': '공정 중',
-              'processingStarted': now,
-            });
-          }
-        } else if (status == '공정 중') {
-          final started = (data['processingStarted'] as Timestamp?)?.toDate();
-          if (started != null) {
-            final elapsed = now.difference(started).inSeconds;
-            if (elapsed >= seconds) {
-              await orders.doc(doc.id).update({
-                'status': '공정 완료',
-                'completedAt': now,
-              });
-            }
-          }
+        if (elapsed >= seconds) {
+          await orders.doc(doc.id).update({
+            'status': '공정 완료',
+            'completedAt': now,
+          });
+          print('업데이트 됨: ${doc.id} → 공정 완료');
         }
+
+        return; // 👉 공정 중인 게 있으면 여기서 끝냄
+      }
+
+      // 2. 공정 중인 게 없으면 주문 접수된 것 중 첫 번째를 공정 시작
+      final waiting =
+          await orders
+              .where('status', isEqualTo: '주문 접수됨')
+              .orderBy('timestamp')
+              .limit(1)
+              .get();
+
+      if (waiting.docs.isNotEmpty) {
+        final doc = waiting.docs.first;
+        await orders.doc(doc.id).update({
+          'status': '공정 중',
+          'processingStarted': now,
+        });
+        print('업데이트 됨: ${doc.id} → 공정 중');
       }
     });
   }
