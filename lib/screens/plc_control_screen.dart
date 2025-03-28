@@ -3,6 +3,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class PLCControlScreen extends StatefulWidget {
+  const PLCControlScreen({super.key});
+
   @override
   _PLCControlScreenState createState() => _PLCControlScreenState();
 }

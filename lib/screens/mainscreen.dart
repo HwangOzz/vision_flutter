@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:vision_flutter/screens/Plccontrolscreen.dart';
+import 'package:vision_flutter/screens/plc_control_screen.dart';
 import 'package:vision_flutter/screens/cctvstreamscreen.dart';
 import 'package:vision_flutter/screens/homescreen.dart';
 import 'FailImageScreen.dart';
 
-class mainscreen extends StatelessWidget {
+class Mainscreen extends StatelessWidget {
+  const Mainscreen({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(

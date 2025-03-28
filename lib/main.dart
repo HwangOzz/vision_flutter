@@ -1,6 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'screens/mainscreen.dart';
+import 'screens/Mainscreen.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -10,8 +10,9 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false, home: mainscreen());
+    return MaterialApp(debugShowCheckedModeBanner: false, home: Mainscreen());
   }
 }
