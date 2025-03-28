@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:vision_flutter/messcreens/plcpageview.dart';
 import 'dart:async';
-
 import 'package:vision_flutter/widgets/remainingtime.dart';
 
 class Orderlistpage extends StatefulWidget {
+  const Orderlistpage({super.key});
   @override
   State<Orderlistpage> createState() => _OrderlistpageState();
 }
@@ -104,38 +105,7 @@ class _OrderlistpageState extends State<Orderlistpage> {
           title: Text('MES 시스템'),
           bottom: TabBar(tabs: <Widget>[Tab(text: '주문리스트'), Tab(text: 'PLC')]),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            final confirm = await showDialog<bool>(
-              context: context,
-              builder:
-                  (context) => AlertDialog(
-                    title: Text('전체 주문 삭제'),
-                    content: Text('정말 모든 주문을 삭제할까요?'),
-                    actions: [
-                      TextButton(
-                        child: Text('취소'),
-                        onPressed: () => Navigator.pop(context, false),
-                      ),
-                      TextButton(
-                        child: Text('삭제'),
-                        onPressed: () => Navigator.pop(context, true),
-                      ),
-                    ],
-                  ),
-            );
-            if (confirm == true) {
-              final snapshot = await orders.get();
-              for (final doc in snapshot.docs) {
-                await orders.doc(doc.id).delete();
-              }
-              setState(() {});
-            }
-          },
-          child: Icon(Icons.delete),
-          backgroundColor: const Color.fromARGB(255, 242, 224, 224),
-          tooltip: '전체 주문 삭제',
-        ),
+
         body: TabBarView(
           children: [
             Column(
@@ -171,9 +141,48 @@ class _OrderlistpageState extends State<Orderlistpage> {
                         keyboardType: TextInputType.number,
                       ),
                       SizedBox(height: 5),
-                      ElevatedButton(
-                        onPressed: _addOrder,
-                        child: Text('주문 추가'),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          ElevatedButton(
+                            onPressed: _addOrder,
+                            child: Text('주문 추가'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () async {
+                              final confirm = await showDialog<bool>(
+                                context: context,
+                                builder:
+                                    (context) => AlertDialog(
+                                      title: Text('전체 주문 삭제'),
+                                      content: Text('정말 모든 주문을 삭제할까요?'),
+                                      actions: [
+                                        TextButton(
+                                          child: Text('취소'),
+                                          onPressed:
+                                              () =>
+                                                  Navigator.pop(context, false),
+                                        ),
+                                        TextButton(
+                                          child: Text('삭제'),
+                                          onPressed:
+                                              () =>
+                                                  Navigator.pop(context, true),
+                                        ),
+                                      ],
+                                    ),
+                              );
+                              if (confirm == true) {
+                                final snapshot = await orders.get();
+                                for (final doc in snapshot.docs) {
+                                  await orders.doc(doc.id).delete();
+                                }
+                                setState(() {});
+                              }
+                            },
+                            child: Text('주문 삭제'),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -264,7 +273,7 @@ class _OrderlistpageState extends State<Orderlistpage> {
                 ),
               ],
             ),
-            Center(child: Text('PLC 화면')), // 두 번째 탭 화면
+            PLCpageview(), // 두 번째 탭 화면
           ],
         ),
       ),
