@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ProcessInfoTab extends StatefulWidget {
+  const ProcessInfoTab({super.key});
   @override
   _ProcessInfoTabState createState() => _ProcessInfoTabState();
 }
@@ -110,3 +111,4 @@ class _ProcessInfoTabState extends State<ProcessInfoTab> {
 
 //아마 지정된 D값마다 시간이 들어갈텐데 0일때 공정시간을 반영하지 않도록해야함.
 //공정 시간정도는 리셋해서 정보를 기입하는것도 나쁘지않을지도??
+//한사이클 공정시간도 넣어야할듯.

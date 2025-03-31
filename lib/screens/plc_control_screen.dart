@@ -16,7 +16,18 @@ class _PLCControlScreenState extends State<PLCControlScreen> {
     10,
     false,
   ); // M0~M9 상태 (false: OFF, true: ON)
-
+  final List<String> mBitLabels = [
+    "컨베이어 1 작동", // M0
+    "로봇1 작동", // M1
+    "로봇2 작동", // M2
+    "컨베이어 2 작동", // M3
+    "비전센서 감지", // M4
+    "컨베이어 3 작동", // M5
+    "로봇3 작동", // M6
+    "컨베이어 1 작동", // M7
+    "창고 적재", // M8
+    "창고 완료", // M9
+  ];
   @override
   void initState() {
     super.initState();
@@ -82,12 +93,12 @@ class _PLCControlScreenState extends State<PLCControlScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 191, 222, 191),
+      backgroundColor: Color.fromARGB(255, 255, 255, 255),
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(90),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.teal[400],
+            color: const Color.fromARGB(255, 153, 154, 154),
             borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30)),
             boxShadow: [
               BoxShadow(
@@ -136,15 +147,19 @@ class _PLCControlScreenState extends State<PLCControlScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "🔘 M0 ~ M9 스위치 제어",
+              "수동제어",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
+            Divider(),
             SizedBox(height: 10),
             ...List.generate(10, (i) {
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("M$i", style: TextStyle(fontSize: 16)),
+                  Text(
+                    mBitLabels[i],
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
                   Switch(
                     value: mBitStates[i],
                     onChanged: (val) {
@@ -156,11 +171,12 @@ class _PLCControlScreenState extends State<PLCControlScreen> {
               );
             }),
             SizedBox(height: 30),
-            Divider(),
+
             Text(
               "📏 D100 제어",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
+            Divider(),
             SizedBox(height: 10),
             Text("현재 D100 값: $d100Value", style: TextStyle(fontSize: 20)),
             SizedBox(height: 10),

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:vision_flutter/messcreens/proccesinfotab.dart';
-import 'package:vision_flutter/messcreens/processdetail.dart';
-import 'package:vision_flutter/messcreens/processpageview.dart';
+import 'package:vision_flutter/screens/messcreens/processinfotab.dart';
+import 'package:vision_flutter/screens/messcreens/processdetail.dart';
+import 'package:vision_flutter/screens/messcreens/processpageview.dart';
 import 'dart:async';
 import 'package:vision_flutter/widgets/remainingtime.dart';
 
@@ -132,6 +132,14 @@ class _OrderlistpageState extends State<Orderlistpage> {
                   child: Column(
                     children: [
                       DropdownButton<String>(
+                        underline: Container(
+                          height: 2,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [Colors.purple, Colors.blue],
+                            ),
+                          ),
+                        ),
                         value: _selectedProduct,
                         items:
                             ['A', 'B', 'C'].map((value) {
@@ -157,21 +165,65 @@ class _OrderlistpageState extends State<Orderlistpage> {
                         decoration: InputDecoration(labelText: '수량'),
                         keyboardType: TextInputType.number,
                       ),
-                      SizedBox(height: 5),
+                      SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           ElevatedButton(
+                            style: ButtonStyle(
+                              elevation: WidgetStatePropertyAll(2),
+                              shape: WidgetStatePropertyAll(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(10),
+                                  ),
+                                ),
+                              ),
+                              backgroundColor: WidgetStatePropertyAll(
+                                const Color.fromARGB(255, 107, 159, 236),
+                              ),
+                              foregroundColor: WidgetStatePropertyAll(
+                                Colors.white,
+                              ),
+                            ),
                             onPressed: _addOrder,
-                            child: Text('주문 추가'),
+                            child: Text(
+                              '주문 추가',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
                           ),
                           ElevatedButton(
+                            style: ButtonStyle(
+                              elevation: WidgetStatePropertyAll(2),
+                              shape: WidgetStatePropertyAll(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(10),
+                                  ),
+                                ),
+                              ),
+                              backgroundColor: WidgetStatePropertyAll(
+                                const Color.fromARGB(255, 107, 159, 236),
+                              ),
+                              foregroundColor: WidgetStatePropertyAll(
+                                Colors.white,
+                              ),
+                            ),
                             onPressed: () async {
                               final confirm = await showDialog<bool>(
                                 context: context,
                                 builder:
                                     (context) => AlertDialog(
-                                      title: Text('전체 주문 삭제'),
+                                      title: Text(
+                                        '전체 주문 삭제',
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
                                       content: Text('정말 모든 주문을 삭제할까요?'),
                                       actions: [
                                         TextButton(
@@ -197,7 +249,13 @@ class _OrderlistpageState extends State<Orderlistpage> {
                                 setState(() {});
                               }
                             },
-                            child: Text('주문 삭제'),
+                            child: Text(
+                              '주문 삭제',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
                           ),
                         ],
                       ),

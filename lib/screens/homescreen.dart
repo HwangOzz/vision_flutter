@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:vision_flutter/screens/developmentprocess.dart';
-import 'package:vision_flutter/screens/orderlistpage.dart';
+import 'package:vision_flutter/screens/developscreens/showpagescreen.dart';
+import 'package:vision_flutter/screens/messcreens/orderlistpage.dart';
 import 'package:vision_flutter/screens/qr_scanner_screen.dart';
 import 'package:vision_flutter/widgets/appbarbutton.dart';
 import 'package:vision_flutter/widgets/boundaryline.dart';

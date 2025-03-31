@@ -8,12 +8,12 @@ class cctvScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 191, 222, 191),
+      backgroundColor: Color.fromARGB(255, 255, 255, 255),
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(90),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.teal[400],
+            color: const Color.fromARGB(255, 153, 154, 154),
             borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30)),
             boxShadow: [
               BoxShadow(
@@ -89,3 +89,5 @@ class cctvScreen extends StatelessWidget {
     );
   }
 }
+
+//비전카메라 화면도 가져오기 가능할듯? 그러면 실시간 화면으로 이름 바꾸고 위아래로 두개.

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vision_flutter/widgets/fullimagepage.dart';
 
-class DevelopmentProcessPage extends StatelessWidget {
+class Wait1ProcessPage extends StatelessWidget {
   final List<String> imageUrls = List.generate(
     12,
     (index) => 'assets/process${index + 1}.png',
@@ -18,7 +18,7 @@ class DevelopmentProcessPage extends StatelessWidget {
 class _PhotoGridPage extends StatelessWidget {
   final List<String> images;
 
-  _PhotoGridPage({required this.images});
+  const _PhotoGridPage({required this.images});
 
   @override
   Widget build(BuildContext context) {
@@ -110,3 +110,5 @@ class _DescriptionPage extends StatelessWidget {
     );
   }
 }
+
+//https://www.youtube.com/watch?v=RLPZzDOPXG4&list=PLEDu8H3ASVFU2tUTAkv8rPAYVR9q-gqod 이거대로 하고 개발 과정 사진 하나씩 넣고 밑에 설명 누르는식 is good

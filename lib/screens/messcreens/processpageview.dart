@@ -76,3 +76,5 @@ class _ProcessSimulationPageState extends State<ProcessSimulationPage> {
 }
 //실제 PLC에서는 M0같은건 한번 켜지고 꺼지니까 한번 켜지면 현재 공정률에 반영하게해야함. 
 //그리고 마지막에 끝나는 신호가 들어오면 다 초기화해야함. 
+//상태를 대기중으로 보여주는것보다 작동중인 장치의 이름을 보여주는것도 나쁘지않을듯
+//자세한 화면으로 현재 공정보여주기?? not bad <- 아예 새로운창? 아니면 현재창에서 뒷배경흐리게?

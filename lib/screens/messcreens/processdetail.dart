@@ -22,6 +22,7 @@ class _ProcessdetailState extends State<Processdetail> {
             Processcircle(progress: 0.4, text1: "로봇2"),
           ],
         ),
+        Divider(),
         SizedBox(height: 20),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -31,6 +32,7 @@ class _ProcessdetailState extends State<Processdetail> {
             Processcircle(progress: 0.4, text1: "저장창고1"),
           ],
         ),
+        Divider(),
         SizedBox(height: 20),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -53,3 +55,4 @@ class _ProcessdetailState extends State<Processdetail> {
 //일단 보여줘야하는거는 로봇3개의 가동률, 저장창고의 적재량, 불량률정도??
 //가동률(%) = (가동 시간 / 총 시간) × 100
 //불량률(%) = (불량품 수량 / 전체 수량) × 100
+//저장률(%) = (적재량 / 적재 가능 수량) × 100

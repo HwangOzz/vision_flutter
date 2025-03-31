@@ -101,12 +101,12 @@ class _failImagescreenState extends State<failImagescreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 191, 222, 191),
+      backgroundColor: Color.fromARGB(255, 255, 255, 255),
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(90),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.teal[400],
+            color: const Color.fromARGB(255, 153, 154, 154),
             borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30)),
             boxShadow: [
               BoxShadow(
@@ -233,6 +233,7 @@ class _failImagescreenState extends State<failImagescreen> {
             ),
           ),
           SizedBox(height: 20),
+          Divider(),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Row(

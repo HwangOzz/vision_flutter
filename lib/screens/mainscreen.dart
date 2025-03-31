@@ -239,3 +239,6 @@ class Mainscreen extends StatelessWidget {
     );
   }
 }
+
+//중간이 비어보이니까 중간에 이미지 하나 넣고 조원소개하면 사라지게 Bool타입으로 init 넣고
+//조원 소개 넣을때 0으로 변경
