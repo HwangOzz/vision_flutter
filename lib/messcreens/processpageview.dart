@@ -74,3 +74,5 @@ class _ProcessSimulationPageState extends State<ProcessSimulationPage> {
     );
   }
 }
+//실제 PLC에서는 M0같은건 한번 켜지고 꺼지니까 한번 켜지면 현재 공정률에 반영하게해야함. 
+//그리고 마지막에 끝나는 신호가 들어오면 다 초기화해야함. 

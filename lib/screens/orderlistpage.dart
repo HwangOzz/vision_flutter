@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:vision_flutter/messcreens/proccesinfotab.dart';
+import 'package:vision_flutter/messcreens/processdetail.dart';
 import 'package:vision_flutter/messcreens/processpageview.dart';
 import 'dart:async';
 import 'package:vision_flutter/widgets/remainingtime.dart';
@@ -43,7 +44,7 @@ class _OrderlistpageState extends State<Orderlistpage> {
 
         if (started == null || product == null || quantity == null) return;
 
-        final type = product.toString().replaceAll('배터리', '');
+        final type = product.toString().replaceAll('제품군', '');
         final seconds = processTime[type]! * quantity;
         final elapsed = now.difference(started).inSeconds;
 
@@ -82,7 +83,7 @@ class _OrderlistpageState extends State<Orderlistpage> {
 
     if (name.isNotEmpty && quantity != null) {
       await orders.add({
-        'product': '배터리$_selectedProduct',
+        'product': '제품군$_selectedProduct',
         'user': name,
         'quantity': quantity,
         'status': '주문 접수됨',
@@ -100,15 +101,24 @@ class _OrderlistpageState extends State<Orderlistpage> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: Scaffold(
         appBar: AppBar(
           title: Text('MES 시스템'),
+          actions: [
+            IconButton(
+              onPressed: () {
+                setState(() {});
+              },
+              icon: Icon(Icons.refresh),
+            ),
+          ],
           bottom: TabBar(
             tabs: <Widget>[
               Tab(text: '주문리스트'),
               Tab(text: '공정 현황'),
               Tab(text: '공정 정보'),
+              Tab(text: "가동률"),
             ],
           ),
         ),
@@ -127,7 +137,7 @@ class _OrderlistpageState extends State<Orderlistpage> {
                             ['A', 'B', 'C'].map((value) {
                               return DropdownMenuItem(
                                 value: value,
-                                child: Text('배터리$value'),
+                                child: Text('제품군$value'),
                               );
                             }).toList(),
                         onChanged: (value) {
@@ -241,7 +251,7 @@ class _OrderlistpageState extends State<Orderlistpage> {
                                                   .toDate();
                                           final type = product
                                               .toString()
-                                              .replaceAll('배터리', '');
+                                              .replaceAll('제품군', '');
                                           final totalSeconds =
                                               ((processTime[type] ?? 0) *
                                                       quantity)
@@ -258,7 +268,7 @@ class _OrderlistpageState extends State<Orderlistpage> {
                                         builder: (context) {
                                           final type = product
                                               .toString()
-                                              .replaceAll('배터리', '');
+                                              .replaceAll('제품군', '');
                                           final totalSeconds =
                                               ((processTime[type] ?? 0) *
                                                       quantity)
@@ -282,6 +292,7 @@ class _OrderlistpageState extends State<Orderlistpage> {
             ),
             ProcessSimulationPage(), // 두 번째 탭 화면
             ProcessInfoTab(), //세 번째 탭 화면
+            Processdetail(), //네 번째 탭 화면
           ],
         ),
       ),

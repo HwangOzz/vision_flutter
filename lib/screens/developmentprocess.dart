@@ -102,7 +102,7 @@ class _DescriptionPage extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.all(24),
         child: Text(
-          '넣어야할것들 : 1.프로젝트 설명 2.개발과정 3.간트 차트',
+          '넣어야할것들 : 1.프로젝트 설명 2.개발과정 3.간트 차트 4.공정과정설명 5.프로잭트결과',
           style: TextStyle(fontSize: 20),
           textAlign: TextAlign.center,
         ),

@@ -41,6 +41,7 @@ dependencies:
   flutter_mjpeg: ^2.0.0
   google_fonts: ^4.0.4
   mobile_scanner: ^6.0.7
+  fl_chart: ^0.70.2
   
 dev_dependencies:
   flutter_test:
