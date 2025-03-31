@@ -10,7 +10,7 @@ class FullImageScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: const Color.fromARGB(213, 255, 255, 255),
       body: Stack(
         children: [
           Center(
@@ -56,6 +56,8 @@ class ExpandedContentWidget extends StatelessWidget {
     child: Material(
       color: Colors.transparent,
       child: Container(
+        height: 400,
+        width: 300,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.all(Radius.circular(10)),

@@ -26,20 +26,32 @@ class _LocationWidgetState extends State<LocationWidget> {
         children: [
           AnimatedPositioned(
             duration: Duration(milliseconds: 500),
-            bottom: isExpanded ? 40 : 100,
+            bottom: isExpanded ? 40 : 150,
             width: isExpanded ? size.width * 0.78 : size.width * 0.7,
             height: isExpanded ? size.height * 0.6 : size.height * 0.5,
             child: ExpandedContentWidget(location: widget.location),
           ),
           AnimatedPositioned(
             duration: Duration(milliseconds: 500),
-            bottom: isExpanded ? 150 : 100,
+            bottom: isExpanded ? 150 : 150,
             child: GestureDetector(
               onPanUpdate: onPanUpdate,
               onTap: () {
                 setState(() => isExpanded = !isExpanded);
               },
               child: ImageWidget(location: widget.location),
+            ),
+          ),
+          Positioned(
+            top: 40, // 상태바 아래 여백
+            left: 16,
+            child: IconButton(
+              icon: Icon(
+                Icons.arrow_back,
+                color: const Color.fromARGB(255, 0, 0, 0),
+                size: 28,
+              ),
+              onPressed: () => Navigator.pop(context),
             ),
           ),
         ],

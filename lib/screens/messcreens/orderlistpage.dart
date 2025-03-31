@@ -136,7 +136,10 @@ class _OrderlistpageState extends State<Orderlistpage> {
                           height: 2,
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
-                              colors: [Colors.purple, Colors.blue],
+                              colors: [
+                                Colors.purple,
+                                const Color.fromARGB(255, 79, 170, 245),
+                              ],
                             ),
                           ),
                         ),

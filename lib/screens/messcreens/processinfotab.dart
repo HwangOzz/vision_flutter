@@ -66,6 +66,17 @@ class _ProcessInfoTabState extends State<ProcessInfoTab> {
           Padding(
             padding: const EdgeInsets.all(16),
             child: DropdownButton<String>(
+              underline: Container(
+                height: 2,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.purple,
+                      const Color.fromARGB(255, 79, 170, 245),
+                    ],
+                  ),
+                ),
+              ),
               value: selectedProduct,
               onChanged: (value) {
                 if (value != null) {

@@ -7,32 +7,32 @@ class DevelopmentProcessPage extends StatelessWidget {
 
   final List<Location> locations = [
     Location(
-      name: "로봇 1",
-      latitude: "37.1234° N",
-      longitude: "127.5678° E",
-      addressLine1: "로봇 1 공정 설명",
-      addressLine2: "제조라인 A",
+      name: "배선",
+      latitude: "글씨 들어갈곳1",
+      longitude: "글씨 들어갈곳2",
+      addressLine1: "배선 설명",
+      addressLine2: "배선 1",
       starRating: 4,
       urlImage: "assets/robot1.png",
       reviews: [
-        Review(urlImage: "assets/user1.png"),
-        Review(urlImage: "assets/user2.png"),
+        // Review(urlImage: "assets/user1.png"),
+        // Review(urlImage: "assets/user2.png"),
       ],
     ),
     Location(
       name: "비전센서",
-      latitude: "37.4321° N",
-      longitude: "127.8765° E",
+      latitude: "글씨 들어갈곳1",
+      longitude: "글씨 들어갈곳2",
       addressLine1: "비전검사 설명",
-      addressLine2: "검사라인 B",
+      addressLine2: "검사라인",
       starRating: 5,
       urlImage: "assets/vision.png",
       reviews: [],
     ),
     Location(
-      name: "창고",
-      latitude: "37.5555° N",
-      longitude: "127.4444° E",
+      name: "중간 개발",
+      latitude: "글씨 들어갈곳1",
+      longitude: "글씨 들어갈곳2",
       addressLine1: "창고 적재 설명",
       addressLine2: "물류 창고 C",
       starRating: 3,
@@ -45,7 +45,6 @@ class DevelopmentProcessPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
-      appBar: AppBar(title: Text("개발 과정"), backgroundColor: Colors.teal),
       body: PageView.builder(
         controller: PageController(viewportFraction: 0.9),
         itemCount: locations.length,
@@ -58,3 +57,4 @@ class DevelopmentProcessPage extends StatelessWidget {
 }
 
 //https://www.youtube.com/watch?v=RLPZzDOPXG4&list=PLEDu8H3ASVFU2tUTAkv8rPAYVR9q-gqod 이거대로 하고 개발 과정 사진 하나씩 넣고 밑에 설명 누르는식 is good
+//밑에 원있는거에 담당한 조원들 얼굴을 넣는거는어때
