@@ -12,34 +12,50 @@ class PLCControlScreen extends StatefulWidget {
 class _PLCControlScreenState extends State<PLCControlScreen> {
   final String serverUrl = "http://192.168.0.126:5000";
   int d100Value = 0;
-  List<bool> mBitStates = List.filled(
-    10,
-    false,
-  ); // M0~M9 상태 (false: OFF, true: ON)
+  bool isFetching = false;
+  bool _isDisposed = false;
+
+  List<bool> mBitStates = List.filled(10, false);
   final List<String> mBitLabels = [
-    "컨베이어 1 작동", // M0
-    "로봇1 작동", // M1
-    "로봇2 작동", // M2
-    "컨베이어 2 작동", // M3
-    "비전센서 감지", // M4
-    "컨베이어 3 작동", // M5
-    "로봇3 작동", // M6
-    "컨베이어 1 작동", // M7
-    "창고 적재", // M8
-    "창고 완료", // M9
+    "컨베이어 1 작동",
+    "로봇1 작동",
+    "로봇2 작동",
+    "컨베이어 2 작동",
+    "비전센서 감지",
+    "컨베이어 3 작동",
+    "로봇3 작동",
+    "컨베이어 1 작동",
+    "창고 적재",
+    "창고 완료",
   ];
+
   @override
   void initState() {
     super.initState();
-    getD100();
-    getMBits();
+    startAutoUpdate(); // 주기적 상태 업데이트 시작
   }
 
+  @override
+  void dispose() {
+    _isDisposed = true;
+    super.dispose();
+  }
+
+  // 상태를 주기적으로 업데이트하는 루프
+  void startAutoUpdate() async {
+    while (!_isDisposed) {
+      await Future.wait([getMBits(), getD100()]);
+      await Future.delayed(Duration(seconds: 1));
+    }
+  }
+
+  // M 비트 상태 가져오기
   Future<void> getMBits() async {
+    if (!mounted) return;
     try {
       final response = await http.get(Uri.parse("$serverUrl/get_m_bits"));
       final responseData = jsonDecode(response.body);
-
+      if (!mounted) return;
       setState(() {
         for (int i = 0; i < 10; i++) {
           mBitStates[i] = responseData["M$i"] == 1;
@@ -50,6 +66,22 @@ class _PLCControlScreenState extends State<PLCControlScreen> {
     }
   }
 
+  // D100 값 가져오기
+  Future<void> getD100() async {
+    if (!mounted) return;
+    try {
+      final response = await http.get(Uri.parse("$serverUrl/get_d100"));
+      final responseData = jsonDecode(response.body);
+      if (!mounted) return;
+      setState(() {
+        d100Value = responseData["value"];
+      });
+    } catch (e) {
+      print("❌ D100 조회 실패: $e");
+    }
+  }
+
+  // D100 설정 (값 보내기)
   Future<void> setD100(int value) async {
     try {
       final response = await http.post(
@@ -64,18 +96,7 @@ class _PLCControlScreenState extends State<PLCControlScreen> {
     }
   }
 
-  Future<void> getD100() async {
-    try {
-      final response = await http.get(Uri.parse("$serverUrl/get_d100"));
-      final responseData = jsonDecode(response.body);
-      setState(() {
-        d100Value = responseData["value"];
-      });
-    } catch (e) {
-      print("❌ D100 조회 실패: $e");
-    }
-  }
-
+  // M 비트 수동 설정
   Future<void> setMBit(String address, int value) async {
     try {
       final response = await http.post(
@@ -89,6 +110,8 @@ class _PLCControlScreenState extends State<PLCControlScreen> {
       print("❌ $address 설정 실패: $e");
     }
   }
+
+  // build 함수는 그대로 유지 (생략 가능)
 
   @override
   Widget build(BuildContext context) {
@@ -126,14 +149,14 @@ class _PLCControlScreenState extends State<PLCControlScreen> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(width: 215),
-                      IconButton(
-                        icon: Icon(Icons.arrow_back, color: Colors.white),
-                        onPressed: () {
-                          Navigator.pop(context); // 이전 화면으로 이동
-                        },
-                      ),
                     ],
+                  ),
+                  Spacer(),
+                  IconButton(
+                    icon: Icon(Icons.arrow_back, color: Colors.white),
+                    onPressed: () {
+                      Navigator.pop(context); // 이전 화면으로 이동
+                    },
                   ),
                 ],
               ),

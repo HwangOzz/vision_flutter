@@ -76,20 +76,8 @@ class _PhotoGridPage extends StatelessWidget {
             );
           },
         ),
+
         // ✅ 상단 뒤로가기 버튼
-        Positioned(
-          top: 30,
-          right: 16,
-          child: IconButton(
-            icon: Icon(
-              Icons.arrow_back,
-              color: Color.fromARGB(255, 255, 255, 255),
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-        ),
       ],
     );
   }

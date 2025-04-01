@@ -10,31 +10,41 @@ class FullImageScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(213, 255, 255, 255),
-      body: Stack(
-        children: [
-          Center(
-            child: Hero(
-              tag: location.name,
-              child: Material(
-                color: Colors.transparent,
-                child: ExpandedContentWidget(location: location),
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/backgroundimage.png"),
+            fit: BoxFit.fill,
+          ),
+        ),
+        child: Stack(
+          children: [
+            Center(
+              child: Hero(
+                tag: location.name,
+                child: Material(
+                  color: Colors.transparent,
+                  child: ExpandedContentWidget(
+                    location: location,
+                    enableTap: false,
+                  ),
+                ),
               ),
             ),
-          ),
-          Positioned(
-            top: 40, // 상태바 아래 여백
-            left: 16,
-            child: IconButton(
-              icon: Icon(
-                Icons.arrow_back,
-                color: const Color.fromARGB(255, 0, 0, 0),
-                size: 28,
+            Positioned(
+              top: 40, // 상태바 아래 여백
+              left: 16,
+              child: IconButton(
+                icon: Icon(
+                  Icons.arrow_back,
+                  color: const Color.fromARGB(255, 0, 0, 0),
+                  size: 28,
+                ),
+                onPressed: () => Navigator.pop(context),
               ),
-              onPressed: () => Navigator.pop(context),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -42,22 +52,21 @@ class FullImageScreen extends StatelessWidget {
 
 class ExpandedContentWidget extends StatelessWidget {
   final Location location;
+  final bool enableTap;
 
-  const ExpandedContentWidget({super.key, required this.location});
+  const ExpandedContentWidget({
+    super.key,
+    required this.location,
+    this.enableTap = true,
+  });
 
   @override
-  Widget build(BuildContext context) => GestureDetector(
-    onTap: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => FullImageScreen(location: location)),
-      );
-    },
-    child: Material(
+  Widget build(BuildContext context) {
+    final content = Material(
       color: Colors.transparent,
       child: Container(
-        height: 400,
-        width: 300,
+        height: 500,
+        width: 400,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -75,9 +84,24 @@ class ExpandedContentWidget extends StatelessWidget {
           ],
         ),
       ),
-    ),
-  );
+    );
 
+    return enableTap
+        ? GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => FullImageScreen(location: location),
+              ),
+            );
+          },
+          child: content,
+        )
+        : content;
+  }
+
+  // 아래 두 함수는 그대로
   Widget buildAddressRating({required Location location}) => Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [

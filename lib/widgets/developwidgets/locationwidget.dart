@@ -42,18 +42,6 @@ class _LocationWidgetState extends State<LocationWidget> {
               child: ImageWidget(location: widget.location),
             ),
           ),
-          Positioned(
-            top: 40, // 상태바 아래 여백
-            left: 16,
-            child: IconButton(
-              icon: Icon(
-                Icons.arrow_back,
-                color: const Color.fromARGB(255, 0, 0, 0),
-                size: 28,
-              ),
-              onPressed: () => Navigator.pop(context),
-            ),
-          ),
         ],
       ),
     );

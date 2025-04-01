@@ -11,8 +11,8 @@ CORS(app)
 VISION_IP = "10.10.24.230"
 VISION_PORT = 2005
 
-PLC_IP = "192.168.24.51"
-PLC_PORT = 2002
+PLC_IP = "192.168.3.250"
+PLC_PORT = 2005
 
 # ====== PLC 연결 함수 ======
 def create_plc_connection():

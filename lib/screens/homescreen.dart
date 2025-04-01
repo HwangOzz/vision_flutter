@@ -93,7 +93,7 @@ class _HomescreenState extends State<Homescreen> {
                   '조원 : 남현수\nSCADA',
                   '조원 : 임윤재\nSCADA',
                   '조원 : 황성현\nSCADA',
-                  '조원 : 권익환\nSCADA',
+                  '조원 : 권익한\nSCADA',
                   '조원 : 이경준\nSCADA',
                 ],
               ),
@@ -237,8 +237,8 @@ class _HomescreenState extends State<Homescreen> {
           if (_showBoundaryLine)
             Positioned(bottom: -15, left: 120, child: Boundaryline()),
           Positioned(
-            top: 30,
-            right: 16,
+            top: 40, // 상태바 아래 여백
+            left: 16,
             child: IconButton(
               icon: Icon(
                 Icons.arrow_back,

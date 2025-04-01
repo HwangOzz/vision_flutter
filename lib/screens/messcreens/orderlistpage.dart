@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:vision_flutter/screens/messcreens/processinfotab.dart';
 import 'package:vision_flutter/screens/messcreens/processdetail.dart';
-import 'package:vision_flutter/screens/messcreens/processpageview.dart';
+import 'package:vision_flutter/screens/messcreens/processpageview1.dart';
 import 'dart:async';
 import 'package:vision_flutter/widgets/remainingtime.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class Orderlistpage extends StatefulWidget {
   const Orderlistpage({super.key});
@@ -67,12 +69,38 @@ class _OrderlistpageState extends State<Orderlistpage> {
               .get();
 
       if (waiting.docs.isNotEmpty) {
+        print("🟢 주문 감지됨, 공정 시작으로 업데이트");
+
         final doc = waiting.docs.first;
         await orders.doc(doc.id).update({
           'status': '공정 중',
           'processingStarted': now,
         });
-        print('업데이트 됨: ${doc.id} → 공정 중');
+
+        try {
+          final response = await http.post(
+            Uri.parse("http://192.168.0.126:5000/set_bit"),
+            headers: {"Content-Type": "application/json"},
+            body: jsonEncode({"address": "M0", "value": 1}),
+          );
+          print('📤 M0 ON 요청 완료: ${response.body}');
+
+          // 4초 후 자동 OFF
+          Future.delayed(Duration(seconds: 6), () async {
+            try {
+              final offResponse = await http.post(
+                Uri.parse("http://192.168.0.126:5000/set_bit"),
+                headers: {"Content-Type": "application/json"},
+                body: jsonEncode({"address": "M0", "value": 0}),
+              );
+              print('📴 M0 OFF 요청 완료: ${offResponse.body}');
+            } catch (e) {
+              print("❌ M0 OFF 실패: $e");
+            }
+          });
+        } catch (e) {
+          print("❌ M0 전송 실패: $e");
+        }
       }
     });
   }
@@ -360,3 +388,6 @@ class _OrderlistpageState extends State<Orderlistpage> {
     );
   }
 }
+
+//주문 하나 들어갔을때 PLC랑 연동해서 1개만 들어가도록 한번해볼까..? 제품군과 주문추가
+//눌렸을때

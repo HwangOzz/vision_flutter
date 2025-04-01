@@ -45,12 +45,36 @@ class DevelopmentProcessPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
-      body: PageView.builder(
-        controller: PageController(viewportFraction: 0.9),
-        itemCount: locations.length,
-        itemBuilder: (context, index) {
-          return LocationWidget(location: locations[index]);
-        },
+      body: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/backgroundimage.png"),
+                fit: BoxFit.fill,
+              ),
+            ),
+            child: PageView.builder(
+              controller: PageController(viewportFraction: 0.9),
+              itemCount: locations.length,
+              itemBuilder: (context, index) {
+                return LocationWidget(location: locations[index]);
+              },
+            ),
+          ),
+          Positioned(
+            top: 40, // 상태바 아래 여백
+            left: 16,
+            child: IconButton(
+              icon: Icon(
+                Icons.arrow_back,
+                color: const Color.fromARGB(255, 0, 0, 0),
+                size: 28,
+              ),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -58,3 +82,4 @@ class DevelopmentProcessPage extends StatelessWidget {
 
 //https://www.youtube.com/watch?v=RLPZzDOPXG4&list=PLEDu8H3ASVFU2tUTAkv8rPAYVR9q-gqod 이거대로 하고 개발 과정 사진 하나씩 넣고 밑에 설명 누르는식 is good
 //밑에 원있는거에 담당한 조원들 얼굴을 넣는거는어때
+//위에 빈공간에 이미지 + 설명으로 채워넣기
