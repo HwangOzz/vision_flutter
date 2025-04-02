@@ -75,6 +75,7 @@ class ExpandedContentWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.end,
+          //여기에 이미지 변수 추가해서 PPT넣을거임
           children: [
             Text(location.addressLine1),
             SizedBox(height: 8),

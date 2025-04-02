@@ -15,7 +15,7 @@ class _PLCControlScreenState extends State<PLCControlScreen> {
   bool isFetching = false;
   bool _isDisposed = false;
 
-  List<bool> mBitStates = List.filled(10, false);
+  List<bool> mBitStates = List.filled(11, false);
   final List<String> mBitLabels = [
     "컨베이어 1 작동",
     "로봇1 작동",
@@ -27,6 +27,7 @@ class _PLCControlScreenState extends State<PLCControlScreen> {
     "컨베이어 1 작동",
     "창고 적재",
     "창고 완료",
+    "⚠️ 긴급 정지",
   ];
 
   @override
@@ -57,7 +58,7 @@ class _PLCControlScreenState extends State<PLCControlScreen> {
       final responseData = jsonDecode(response.body);
       if (!mounted) return;
       setState(() {
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 11; i++) {
           mBitStates[i] = responseData["M$i"] == 1;
         }
       });
@@ -194,7 +195,53 @@ class _PLCControlScreenState extends State<PLCControlScreen> {
               );
             }),
             SizedBox(height: 30),
-
+            Text(
+              "🛑 긴급 정지",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.red,
+              ),
+            ),
+            Divider(),
+            SizedBox(height: 10),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+              ),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder:
+                      (context) => AlertDialog(
+                        title: Text("긴급 정지"),
+                        content: Text("정말로 긴급 정지하시겠습니까?"),
+                        actions: [
+                          TextButton(
+                            child: Text("취소"),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                          TextButton(
+                            child: Text(
+                              "확인",
+                              style: TextStyle(color: Colors.red),
+                            ),
+                            onPressed: () {
+                              setMBit("M10", 1); // M10 비트에 1 쓰기
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ],
+                      ),
+                );
+              },
+              child: Text(
+                "긴급 정지",
+                style: TextStyle(fontSize: 16, color: Colors.white),
+              ),
+            ),
+            SizedBox(height: 10),
             Text(
               "📏 D100 제어",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),

@@ -20,6 +20,16 @@ class DevelopmentProcessPage extends StatelessWidget {
       ],
     ),
     Location(
+      name: "E-PLAN",
+      latitude: "글씨 들어갈곳1",
+      longitude: "글씨 들어갈곳2",
+      addressLine1: "E-PLAN 설명",
+      addressLine2: "물류 창고 C",
+      starRating: 3,
+      urlImage: "assets/e-plan.png",
+      reviews: [],
+    ),
+    Location(
       name: "비전센서",
       latitude: "글씨 들어갈곳1",
       longitude: "글씨 들어갈곳2",
