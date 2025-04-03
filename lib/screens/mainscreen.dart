@@ -8,6 +8,8 @@ class Mainscreen extends StatelessWidget {
   const Mainscreen({super.key});
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       body: Column(
         children: [
@@ -28,7 +30,7 @@ class Mainscreen extends StatelessWidget {
                     bottomLeft: Radius.circular(60),
                   ),
                 ),
-                height: 470,
+                height: screenHeight * 0.65,
                 child: Padding(
                   padding: const EdgeInsets.only(top: 30, left: 40, right: 40),
                   child: Column(
@@ -239,6 +241,3 @@ class Mainscreen extends StatelessWidget {
     );
   }
 }
-
-//중간이 비어보이니까 중간에 이미지 하나 넣고 조원소개하면 사라지게 Bool타입으로 init 넣고
-//조원 소개 넣을때 0으로 변경

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vision_flutter/screens/developscreens/showpagescreen.dart';
 import 'package:vision_flutter/screens/messcreens/orderlistpage.dart';
 import 'package:vision_flutter/screens/qr_scanner_screen.dart';
+import 'package:vision_flutter/screens/settingscreen.dart';
 import 'package:vision_flutter/widgets/appbarbutton.dart';
 import 'package:vision_flutter/widgets/boundaryline.dart';
 import 'package:vision_flutter/widgets/member_dialog.dart';
@@ -17,6 +18,8 @@ class Homescreen extends StatefulWidget {
 
 class _HomescreenState extends State<Homescreen> {
   bool _showBoundaryLine = false;
+  String selectedServer = "http://192.168.0.126:5000"; // 기본 서버 IP
+
   void sendToPLC(String qrText) async {
     try {
       final parts = qrText.split(":");
@@ -26,9 +29,7 @@ class _HomescreenState extends State<Homescreen> {
       final value = int.tryParse(parts[1]);
       if (value == null) return;
 
-      final url = Uri.parse(
-        "http://192.168.0.126:5000/set_word",
-      ); // 👈 Flask 서버 IP로 수정
+      final url = Uri.parse("$selectedServer/set_word");
 
       final response = await http.post(
         url,
@@ -180,7 +181,24 @@ class _HomescreenState extends State<Homescreen> {
                 );
               },
             ),
-            Appbarbutton(text1: "설정", icon1: Icons.settings),
+            Appbarbutton(
+              text1: "설정",
+              icon1: Icons.settings,
+              onTap: () async {
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (_) => SettingScreen(currentServer: selectedServer),
+                  ),
+                );
+                if (result != null && result is String) {
+                  setState(() {
+                    selectedServer = result;
+                  });
+                }
+              },
+            ),
           ],
         ),
       ),

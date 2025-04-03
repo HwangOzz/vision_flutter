@@ -156,7 +156,7 @@ class _OrderlistpageState extends State<Orderlistpage> {
             Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(16.0),
                   child: Column(
                     children: [
                       DropdownButton<String>(
