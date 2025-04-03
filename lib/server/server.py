@@ -7,6 +7,10 @@ import pymcprotocol
 app = Flask(__name__)
 CORS(app)
 
+
+# ====== 전역 캐시용 변수 ======
+m_bit_cache = [0] * 1000  # M0~M999 저장
+
 # ====== 네트워크 설정 ======
 VISION_IP = "10.10.24.230"
 VISION_PORT = 2005
@@ -74,7 +78,22 @@ def vision_socket_thread():
             print(f"🚨 소켓 연결 오류: {e}")
             time.sleep(5)
 
-# ====== Flask API ======
+# ====== PLC API ======
+def update_m_bit_cache_thread():
+    global m_bit_cache
+    while True:
+        try:
+            plc = create_plc_connection()
+            temp_cache = []
+            for i in range(0, 1000, 100):  # 100개씩 나눠서 읽기
+                values = plc.batchread_bitunits(f"M{i}", 100)
+                temp_cache.extend([int(v) for v in values])
+            plc.close()
+            m_bit_cache = temp_cache
+            print("✅ M 비트 캐시 업데이트 완료")
+        except Exception as e:
+            print(f"❌ M 비트 캐시 업데이트 실패: {e}")
+        time.sleep(1)  # 1초에 한 번 갱신
 
 @app.route("/set_plc_info", methods=["POST"])
 def set_plc_info():
@@ -152,13 +171,17 @@ def set_bit():
 @app.route("/get_m_bits", methods=["GET"])
 def get_m_bits():
     try:
-        plc = create_plc_connection()
-        values = plc.batchread_bitunits("M0", 10)
-        plc.close()
-        result = {f"M{i}": int(values[i]) for i in range(10)}
+        start = int(request.args.get("start", 0))
+        count = int(request.args.get("count", 10))
+        if start < 0 or count < 1 or (start + count) > len(m_bit_cache):
+            return jsonify({"error": "Invalid range"}), 400
+
+        sliced = m_bit_cache[start:start+count]
+        result = {f"M{start + i}": sliced[i] for i in range(len(sliced))}
         return jsonify(result), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 # ====== 이미지 관련 ======
 FAIL_IMAGE_FOLDER = r"\\10.10.24.194\VisionSensorImages\Fail"
@@ -207,5 +230,6 @@ def set_word():
 # ====== 서버 실행 + 비전센서 쓰레드 시작 ======
 if __name__ == "__main__":
     threading.Thread(target=vision_socket_thread, daemon=True).start()
+    threading.Thread(target=update_m_bit_cache_thread, daemon=True).start()
     print("🚀 Flask 서버 시작 중...")
     app.run(host="0.0.0.0", port=5000, debug=True)

@@ -12,8 +12,8 @@ class PageViewDetail extends StatefulWidget {
 }
 
 class _PageViewDetailState extends State<PageViewDetail> {
-  List<bool> mBits = List.filled(10, false);
-  List<bool> mBitsCompleted = List.filled(10, false);
+  List<bool> mBits = List.filled(1001, false);
+  List<bool> mBitsCompleted = List.filled(1001, false);
   bool isFetching = false;
   bool _isDisposed = false;
 
@@ -35,14 +35,14 @@ class _PageViewDetailState extends State<PageViewDetail> {
 
     try {
       final response = await http.get(
-        Uri.parse("${Global.serverUrl}/get_m_bits"),
+        Uri.parse("${Global.serverUrl}/get_m_bits?start=0&count=10"),
       );
       final data = jsonDecode(response.body);
 
       if (!mounted) return;
 
       setState(() {
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 1001; i++) {
           bool currentState = data["M$i"] == 1;
           mBits[i] = currentState;
           if (currentState) {
@@ -54,7 +54,7 @@ class _PageViewDetailState extends State<PageViewDetail> {
         }
 
         if (data["M9"] == 1) {
-          mBitsCompleted = List.filled(10, false);
+          mBitsCompleted = List.filled(1001, false);
         }
       });
     } catch (e) {
@@ -104,7 +104,7 @@ class _PageViewDetailState extends State<PageViewDetail> {
                           child: Center(
                             child: MBitVideoPlayer(
                               videoPath: 'assets/animation/robot-arm.mp4',
-                              isActive: mBits[0], // M상태와 연결
+                              isActive: mBits[1], // M상태와 연결
                               rotation: 0, // 회전
                               flipX: false, // 좌우반전 적용
                             ),
@@ -115,7 +115,7 @@ class _PageViewDetailState extends State<PageViewDetail> {
                           child: Center(
                             child: MBitVideoPlayer(
                               videoPath: 'assets/animation/conveyor-belt.mp4',
-                              isActive: mBits[2], // M상태와 연결
+                              isActive: mBits[0], // M상태와 연결
                               rotation: 180, // 회전
                               flipX: false, // 좌우반전 적용
                             ),
@@ -126,7 +126,8 @@ class _PageViewDetailState extends State<PageViewDetail> {
                           child: Center(
                             child: MBitVideoPlayer(
                               videoPath: 'assets/animation/robot-arm.mp4',
-                              isActive: mBits[1], // M상태와 연결
+                              isActive:
+                                  mBits[2] || mBits[90] || mBits[91], // M상태와 연결
                               rotation: 0, // 회전
                               flipX: true, // 좌우반전 적용
                             ),
@@ -157,7 +158,7 @@ class _PageViewDetailState extends State<PageViewDetail> {
                           child: SizedBox(
                             child: MBitVideoPlayer(
                               videoPath: 'assets/animation/conveyor-belt.mp4',
-                              isActive: mBits[3], // M상태와 연결
+                              isActive: mBits[0], // M상태와 연결
                               rotation: 180, // 회전
                               flipX: false, // 좌우반전 적용
                             ),
@@ -177,7 +178,7 @@ class _PageViewDetailState extends State<PageViewDetail> {
                           child: SizedBox(
                             child: MBitVideoPlayer(
                               videoPath: 'assets/animation/conveyor-belt.mp4',
-                              isActive: mBits[4], // M상태와 연결
+                              isActive: mBits[3], // M상태와 연결
                               rotation: 180, // 회전
                               flipX: false, // 좌우반전 적용
                             ),
@@ -188,7 +189,7 @@ class _PageViewDetailState extends State<PageViewDetail> {
                           child: SizedBox(
                             child: MBitVideoPlayer(
                               videoPath: 'assets/animation/camera.mp4',
-                              isActive: mBits[5], // M상태와 연결
+                              isActive: mBits[4], // M상태와 연결
                               rotation: 0, // 회전
                               flipX: true, // 좌우반전 적용
                             ),
@@ -207,7 +208,7 @@ class _PageViewDetailState extends State<PageViewDetail> {
                           child: SizedBox(
                             child: MBitVideoPlayer(
                               videoPath: 'assets/animation/conveyor-belt.mp4',
-                              isActive: mBits[6], // M상태와 연결
+                              isActive: mBits[4], // M상태와 연결
                               rotation: 180, // 회전
                               flipX: false, // 좌우반전 적용
                             ),
