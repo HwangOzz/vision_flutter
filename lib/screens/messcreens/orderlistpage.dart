@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:vision_flutter/globals/serverurl.dart';
 import 'package:vision_flutter/screens/messcreens/processinfotab.dart';
 import 'package:vision_flutter/screens/messcreens/processdetail.dart';
 import 'package:vision_flutter/screens/messcreens/processpageview1.dart';
@@ -79,7 +80,7 @@ class _OrderlistpageState extends State<Orderlistpage> {
 
         try {
           final response = await http.post(
-            Uri.parse("http://192.168.0.126:5000/set_bit"),
+            Uri.parse("${Global.serverUrl}/set_bit"),
             headers: {"Content-Type": "application/json"},
             body: jsonEncode({"address": "M0", "value": 1}),
           );
@@ -89,7 +90,7 @@ class _OrderlistpageState extends State<Orderlistpage> {
           Future.delayed(Duration(seconds: 6), () async {
             try {
               final offResponse = await http.post(
-                Uri.parse("http://192.168.0.126:5000/set_bit"),
+                Uri.parse("${Global.serverUrl}/set_bit"),
                 headers: {"Content-Type": "application/json"},
                 body: jsonEncode({"address": "M0", "value": 0}),
               );

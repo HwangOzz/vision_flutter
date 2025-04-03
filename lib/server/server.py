@@ -11,14 +11,15 @@ CORS(app)
 VISION_IP = "10.10.24.230"
 VISION_PORT = 2005
 
-PLC_IP = "192.168.3.250"
-PLC_PORT = 2005
+# ✅ 동적으로 변경 가능한 PLC IP와 포트
+current_plc_ip = "192.168.3.250"
+current_plc_port = 2005
 
 # ====== PLC 연결 함수 ======
 def create_plc_connection():
     plc = pymcprotocol.Type3E()
     plc.setaccessopt(commtype="ascii")
-    plc.connect(PLC_IP, PLC_PORT)
+    plc.connect(current_plc_ip, current_plc_port)
     return plc
 
 # ====== 검사 상태 수신 쓰레드 함수 ======
@@ -28,11 +29,11 @@ def vision_socket_thread():
     while True:
         try:
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client_socket:
-                client_socket.settimeout(10)  # 타임아웃 설정
+                client_socket.settimeout(10)
                 client_socket.connect((VISION_IP, VISION_PORT))
                 print(f"✅ 비전 센서 연결됨! (IP: {VISION_IP}, 포트: {VISION_PORT})")
 
-                buffer = ""  # 받은 데이터 누적용
+                buffer = ""
 
                 while True:
                     try:
@@ -43,13 +44,11 @@ def vision_socket_thread():
                             continue
 
                         buffer += data
-                        # 데이터 끝에 개행(\n)이나 명확한 구분자가 있다면 분리
                         results = buffer.strip().split(",")
-                        buffer = ""  # 버퍼 초기화
+                        buffer = ""
 
                         for result in results:
                             result = result.strip()
-
                             if "1P" in result:
                                 current_result = 1
                             elif "1F" in result:
@@ -76,6 +75,30 @@ def vision_socket_thread():
             time.sleep(5)
 
 # ====== Flask API ======
+
+@app.route("/set_plc_info", methods=["POST"])
+def set_plc_info():
+    global current_plc_ip, current_plc_port
+    try:
+        data = request.get_json()
+        new_ip = data.get("ip")
+        new_port = data.get("port")
+
+        if not new_ip:
+            return jsonify({"error": "IP 주소 없음"}), 400
+        if not isinstance(new_port, int):
+            return jsonify({"error": "포트는 숫자여야 함"}), 400
+
+        current_plc_ip = new_ip
+        current_plc_port = new_port
+
+        print(f"📡 PLC IP/Port 변경됨: {current_plc_ip}:{current_plc_port}")
+        return jsonify({
+            "success": True,
+            "message": f"PLC IP가 {current_plc_ip}:{current_plc_port} 로 변경됨"
+        }), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/get_D1900_status", methods=["GET"])
 def get_D1900_status():
@@ -117,28 +140,23 @@ def set_bit():
         data = request.get_json()
         address = data.get("address")
         value = data.get("value")
-
         if not address or value not in [0, 1]:
             return jsonify({"error": "Invalid address or value"}), 400
-
         plc = create_plc_connection()
         plc.batchwrite_bitunits(headdevice=address, values=[value])
         plc.close()
-
         return jsonify({"success": True, "message": f"{address} = {value} 설정됨"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
+
 @app.route("/get_m_bits", methods=["GET"])
 def get_m_bits():
     try:
         plc = create_plc_connection()
-        values = plc.batchread_bitunits("M0", 10)  # M0 ~ M9까지 10개 읽기
+        values = plc.batchread_bitunits("M0", 10)
         plc.close()
-
-        result = {f"M{i}": int(values[i]) for i in range(10)}  # 딕셔너리 형태로 변환
+        result = {f"M{i}": int(values[i]) for i in range(10)}
         return jsonify(result), 200
-
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -169,6 +187,7 @@ def get_image(filename):
         return Response(img_io, mimetype="image/png")
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 # ====== QR코드 관련 ======
 @app.route("/set_word", methods=["POST"])
 def set_word():
@@ -176,14 +195,11 @@ def set_word():
         data = request.get_json()
         address = data.get("address")
         value = data.get("value")
-
         if not address or value is None:
             return jsonify({"error": "Invalid address or value"}), 400
-
         plc = create_plc_connection()
         plc.batchwrite_wordunits(address, [int(value)])
         plc.close()
-
         return jsonify({"success": True, "message": f"{address} = {value} 설정됨"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500

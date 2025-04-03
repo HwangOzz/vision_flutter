@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:vision_flutter/globals/serverurl.dart';
+
 class PLCControlScreen extends StatefulWidget {
   const PLCControlScreen({super.key});
 
@@ -10,7 +12,6 @@ class PLCControlScreen extends StatefulWidget {
 }
 
 class _PLCControlScreenState extends State<PLCControlScreen> {
-  final String serverUrl = "http://192.168.0.126:5000";
   int d100Value = 0;
   bool isFetching = false;
   bool _isDisposed = false;
@@ -54,7 +55,9 @@ class _PLCControlScreenState extends State<PLCControlScreen> {
   Future<void> getMBits() async {
     if (!mounted) return;
     try {
-      final response = await http.get(Uri.parse("$serverUrl/get_m_bits"));
+      final response = await http.get(
+        Uri.parse("${Global.serverUrl}/get_m_bits"),
+      );
       final responseData = jsonDecode(response.body);
       if (!mounted) return;
       setState(() {
@@ -71,7 +74,10 @@ class _PLCControlScreenState extends State<PLCControlScreen> {
   Future<void> getD100() async {
     if (!mounted) return;
     try {
-      final response = await http.get(Uri.parse("$serverUrl/get_d100"));
+      final response = await http.get(
+        Uri.parse("${Global.serverUrl}/get_d100"),
+      );
+
       final responseData = jsonDecode(response.body);
       if (!mounted) return;
       setState(() {
@@ -86,7 +92,7 @@ class _PLCControlScreenState extends State<PLCControlScreen> {
   Future<void> setD100(int value) async {
     try {
       final response = await http.post(
-        Uri.parse("$serverUrl/set_d100"),
+        Uri.parse("${Global.serverUrl}/set_d100"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"value": value}),
       );
@@ -101,10 +107,11 @@ class _PLCControlScreenState extends State<PLCControlScreen> {
   Future<void> setMBit(String address, int value) async {
     try {
       final response = await http.post(
-        Uri.parse("$serverUrl/set_bit"),
+        Uri.parse("${Global.serverUrl}/set_bit"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"address": address, "value": value}),
       );
+
       final responseData = jsonDecode(response.body);
       print("✅ ${responseData["message"]}");
     } catch (e) {

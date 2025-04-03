@@ -19,17 +19,16 @@ class Homescreen extends StatefulWidget {
 class _HomescreenState extends State<Homescreen> {
   bool _showBoundaryLine = false;
   String selectedServer = "http://192.168.0.126:5000"; // 기본 서버 IP
-
   void sendToPLC(String qrText) async {
     try {
       final parts = qrText.split(":");
       if (parts.length != 2) return;
 
-      final address = parts[0]; // 예: D1901
+      final address = parts[0];
       final value = int.tryParse(parts[1]);
       if (value == null) return;
 
-      final url = Uri.parse("$selectedServer/set_word");
+      final url = Uri.parse("$selectedServer/set_word"); // ✅ 설정값 반영됨
 
       final response = await http.post(
         url,
@@ -173,7 +172,7 @@ class _HomescreenState extends State<Homescreen> {
 
             Appbarbutton(
               text1: "개발 과정",
-              icon1: Icons.headset_mic,
+              icon1: Icons.insights_outlined,
               onTap: () {
                 Navigator.push(
                   context,
@@ -253,7 +252,14 @@ class _HomescreenState extends State<Homescreen> {
             ],
           ),
           if (_showBoundaryLine)
-            Positioned(bottom: -15, left: 120, child: Boundaryline()),
+            Positioned(
+              bottom: MediaQuery.of(context).size.height * 0.01,
+              left:
+                  MediaQuery.of(context).size.width * 0.5 -
+                  85, // Boundaryline 너비 절반만큼 빼주기
+              child: Boundaryline(),
+            ),
+
           Positioned(
             top: 40, // 상태바 아래 여백
             left: 16,

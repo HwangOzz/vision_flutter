@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:vision_flutter/globals/serverurl.dart';
 import 'dart:convert';
 import 'package:vision_flutter/screens/messcreens/pageviewdetail.dart';
 
@@ -9,7 +10,6 @@ class ProcessSimulationPage extends StatefulWidget {
 }
 
 class _ProcessSimulationPageState extends State<ProcessSimulationPage> {
-  final String serverUrl = "http://192.168.0.126:5000"; // Flask 서버 주소
   List<bool> mBits = List.filled(10, false); // M0 ~ M9 상태 저장
   bool isFetching = false; // 상태 요청 중 여부
   List<bool> mBitsCompleted = List.filled(10, false);
@@ -33,7 +33,9 @@ class _ProcessSimulationPageState extends State<ProcessSimulationPage> {
     isFetching = true;
 
     try {
-      final response = await http.get(Uri.parse("$serverUrl/get_m_bits"));
+      final response = await http.get(
+        Uri.parse("${Global.serverUrl}/get_m_bits"),
+      );
       final data = jsonDecode(response.body);
 
       if (!mounted) return; // <- 여기서 먼저 체크!

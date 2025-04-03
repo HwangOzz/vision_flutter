@@ -27,28 +27,23 @@ class cctvScreen extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      Icon(Icons.tv, color: Colors.white),
-                      SizedBox(width: 10),
-                      Text(
-                        "CCTV",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(width: 240),
-                      IconButton(
-                        icon: Icon(Icons.arrow_back, color: Colors.white),
-                        onPressed: () {
-                          Navigator.pop(context); // 이전 화면으로 이동
-                        },
-                      ),
-                    ],
+                  Icon(Icons.tv, color: Colors.white),
+                  SizedBox(width: 10),
+                  Text(
+                    "CCTV",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Spacer(),
+                  IconButton(
+                    icon: Icon(Icons.arrow_back, color: Colors.white),
+                    onPressed: () {
+                      Navigator.pop(context); // 이전 화면으로 이동
+                    },
                   ),
                 ],
               ),

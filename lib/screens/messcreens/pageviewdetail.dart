@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:vision_flutter/globals/serverurl.dart';
 import 'package:vision_flutter/widgets/mbitvideoplayer.dart';
 import 'dart:convert';
 
@@ -11,7 +12,6 @@ class PageViewDetail extends StatefulWidget {
 }
 
 class _PageViewDetailState extends State<PageViewDetail> {
-  final String serverUrl = "http://192.168.0.126:5000";
   List<bool> mBits = List.filled(10, false);
   List<bool> mBitsCompleted = List.filled(10, false);
   bool isFetching = false;
@@ -34,7 +34,9 @@ class _PageViewDetailState extends State<PageViewDetail> {
     isFetching = true;
 
     try {
-      final response = await http.get(Uri.parse("$serverUrl/get_m_bits"));
+      final response = await http.get(
+        Uri.parse("${Global.serverUrl}/get_m_bits"),
+      );
       final data = jsonDecode(response.body);
 
       if (!mounted) return;
@@ -71,162 +73,211 @@ class _PageViewDetailState extends State<PageViewDetail> {
       backgroundColor: Colors.white,
       body: Stack(
         children: [
-          Column(
-            children: [
-              SizedBox(height: 15),
-              Align(
-                alignment: Alignment.centerRight,
-                child: Container(
-                  height: 110,
-                  width: 300,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage("assets/storage-mes.png"),
-                      fit: BoxFit.fill,
-                    ),
-                  ),
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Center(
+            child: SizedBox(
+              height: 1890,
+              width: 500,
+              child: Column(
                 children: [
-                  SizedBox(
-                    height: 110,
-                    width: 130,
-                    child: MBitVideoPlayer(
-                      videoPath: 'assets/animation/robot-arm.mp4',
-                      isActive: mBits[0], // M상태와 연결
-                      rotation: 0, // 회전
-                      flipX: false, // 좌우반전 적용
+                  Flexible(
+                    flex: 1,
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Container(
+                        width: 300,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage("assets/storage-mes.png"),
+                            fit: BoxFit.fill,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                  SizedBox(
-                    height: 110,
-                    width: 130,
-                    child: MBitVideoPlayer(
-                      videoPath: 'assets/animation/conveyor-belt.mp4',
-                      isActive: mBits[2], // M상태와 연결
-                      rotation: 180, // 회전
-                      flipX: false, // 좌우반전 적용
+                  Flexible(
+                    flex: 1,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Flexible(
+                          flex: 1,
+                          child: Center(
+                            child: MBitVideoPlayer(
+                              videoPath: 'assets/animation/robot-arm.mp4',
+                              isActive: mBits[0], // M상태와 연결
+                              rotation: 0, // 회전
+                              flipX: false, // 좌우반전 적용
+                            ),
+                          ),
+                        ),
+                        Flexible(
+                          flex: 1,
+                          child: Center(
+                            child: MBitVideoPlayer(
+                              videoPath: 'assets/animation/conveyor-belt.mp4',
+                              isActive: mBits[2], // M상태와 연결
+                              rotation: 180, // 회전
+                              flipX: false, // 좌우반전 적용
+                            ),
+                          ),
+                        ),
+                        Flexible(
+                          flex: 1,
+                          child: Center(
+                            child: MBitVideoPlayer(
+                              videoPath: 'assets/animation/robot-arm.mp4',
+                              isActive: mBits[1], // M상태와 연결
+                              rotation: 0, // 회전
+                              flipX: true, // 좌우반전 적용
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 14),
+                      ],
                     ),
                   ),
-                  SizedBox(
-                    height: 110,
-                    width: 130,
-                    child: MBitVideoPlayer(
-                      videoPath: 'assets/animation/robot-arm.mp4',
-                      isActive: mBits[1], // M상태와 연결
-                      rotation: 0, // 회전
-                      flipX: true, // 좌우반전 적용
-                    ),
-                  ),
-                ],
-              ),
 
-              Row(
-                children: [
-                  Container(
-                    height: 110,
-                    width: 140.6,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage("assets/storage-mes.png"),
-                        fit: BoxFit.fill,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 110,
-                    width: 130,
-                    child: MBitVideoPlayer(
-                      videoPath: 'assets/animation/conveyor-belt.mp4',
-                      isActive: mBits[3], // M상태와 연결
-                      rotation: 180, // 회전
-                      flipX: false, // 좌우반전 적용
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    height: 110,
-                    width: 141.3,
-                    child: MBitVideoPlayer(
-                      videoPath: 'assets/animation/camera.mp4',
-                      isActive: mBits[5], // M상태와 연결
-                      rotation: 0, // 회전
-                      flipX: false, // 좌우반전 적용
-                    ),
-                  ),
-                  SizedBox(
-                    height: 110,
-                    width: 130,
-                    child: MBitVideoPlayer(
-                      videoPath: 'assets/animation/conveyor-belt.mp4',
-                      isActive: mBits[4], // M상태와 연결
-                      rotation: 180, // 회전
-                      flipX: false, // 좌우반전 적용
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 110,
-                width: 130,
-                child: MBitVideoPlayer(
-                  videoPath: 'assets/animation/conveyor-belt.mp4',
-                  isActive: mBits[6], // M상태와 연결
-                  rotation: 180, // 회전
-                  flipX: false, // 좌우반전 적용
-                ),
-              ),
-              Row(
-                children: [
-                  Column(
-                    children: [
-                      Text("NG", style: TextStyle(fontWeight: FontWeight.w600)),
-                      Container(
-                        height: 100,
-                        width: 140,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage("assets/storage-mes.png"),
-                            fit: BoxFit.fill,
+                  Flexible(
+                    flex: 1,
+                    child: Row(
+                      children: [
+                        Flexible(
+                          flex: 1,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage("assets/storage-mes.png"),
+                                fit: BoxFit.fill,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 110,
-                    width: 130,
-                    child: MBitVideoPlayer(
-                      videoPath: 'assets/animation/robot-arm.mp4',
-                      isActive: mBits[7], // M상태와 연결
-                      rotation: 180, // 회전
-                      flipX: false, // 좌우반전 적용
-                    ),
-                  ),
-                  Column(
-                    children: [
-                      Text("OK", style: TextStyle(fontWeight: FontWeight.w600)),
-                      Container(
-                        height: 110,
-                        width: 140,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage("assets/storage-mes.png"),
-                            fit: BoxFit.fill,
+                        Flexible(
+                          flex: 1,
+                          child: SizedBox(
+                            child: MBitVideoPlayer(
+                              videoPath: 'assets/animation/conveyor-belt.mp4',
+                              isActive: mBits[3], // M상태와 연결
+                              rotation: 180, // 회전
+                              flipX: false, // 좌우반전 적용
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                        Flexible(flex: 1, child: SizedBox()),
+                      ],
+                    ),
+                  ),
+                  Flexible(
+                    flex: 1,
+                    child: Row(
+                      children: [
+                        Flexible(flex: 1, child: Spacer()),
+                        Flexible(
+                          flex: 1,
+                          child: SizedBox(
+                            child: MBitVideoPlayer(
+                              videoPath: 'assets/animation/conveyor-belt.mp4',
+                              isActive: mBits[4], // M상태와 연결
+                              rotation: 180, // 회전
+                              flipX: false, // 좌우반전 적용
+                            ),
+                          ),
+                        ),
+                        Flexible(
+                          flex: 1,
+                          child: SizedBox(
+                            child: MBitVideoPlayer(
+                              videoPath: 'assets/animation/camera.mp4',
+                              isActive: mBits[5], // M상태와 연결
+                              rotation: 0, // 회전
+                              flipX: true, // 좌우반전 적용
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Flexible(
+                    flex: 1,
+                    child: Row(
+                      children: [
+                        Flexible(flex: 1, child: Spacer()),
+                        Flexible(
+                          flex: 1,
+                          child: SizedBox(
+                            child: MBitVideoPlayer(
+                              videoPath: 'assets/animation/conveyor-belt.mp4',
+                              isActive: mBits[6], // M상태와 연결
+                              rotation: 180, // 회전
+                              flipX: false, // 좌우반전 적용
+                            ),
+                          ),
+                        ),
+                        Flexible(flex: 1, child: Spacer()),
+                      ],
+                    ),
+                  ),
+                  Flexible(
+                    flex: 1,
+                    child: Row(
+                      children: [
+                        Flexible(
+                          flex: 1,
+                          child: Column(
+                            children: [
+                              Text(
+                                "NG",
+                                style: TextStyle(fontWeight: FontWeight.w600),
+                              ),
+                              Container(
+                                height: 100,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: AssetImage("assets/storage-mes.png"),
+                                    fit: BoxFit.fill,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Flexible(
+                          flex: 1,
+                          child: SizedBox(
+                            child: MBitVideoPlayer(
+                              videoPath: 'assets/animation/robot-arm.mp4',
+                              isActive: mBits[7], // M상태와 연결
+                              rotation: 180, // 회전
+                              flipX: false, // 좌우반전 적용
+                            ),
+                          ),
+                        ),
+                        Flexible(
+                          flex: 1,
+                          child: Column(
+                            children: [
+                              Text(
+                                "OK",
+                                style: TextStyle(fontWeight: FontWeight.w600),
+                              ),
+                              Container(
+                                height: 100,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: AssetImage("assets/storage-mes.png"),
+                                    fit: BoxFit.fill,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
-            ],
+            ),
           ),
           Positioned(
             top: 40, // 상태바 아래 여백
