@@ -19,10 +19,9 @@ class _OrderlistpageState extends State<Orderlistpage> {
   final _nameController = TextEditingController();
   final _quantityController = TextEditingController();
   String _selectedProduct = 'A';
-
   final orders = FirebaseFirestore.instance.collection('orders');
-
   final processTime = {'A': 10, 'B': 12, 'C': 15};
+  final Map<String, int> productCode = {'A': 1, 'B': 2, 'C': 3};
 
   @override
   void initState() {
@@ -51,6 +50,21 @@ class _OrderlistpageState extends State<Orderlistpage> {
         final seconds = processTime[type]! * quantity;
         final elapsed = now.difference(started).inSeconds;
 
+        // 🔽 여기 추가: D2000 자동 전송
+        final code = productCode[type];
+        if (code != null) {
+          try {
+            final response = await http.post(
+              Uri.parse("${Global.serverUrl}/set_word"),
+              headers: {"Content-Type": "application/json"},
+              body: jsonEncode({"address": "D2000", "value": code}),
+            );
+            print("✅ [공정중 기준] D2000 = $code 전송됨: ${response.body}");
+          } catch (e) {
+            print("❌ [공정중 기준] D2000 전송 실패: $e");
+          }
+        }
+
         if (elapsed >= seconds) {
           await orders.doc(doc.id).update({
             'status': '공정 완료',
@@ -73,34 +87,53 @@ class _OrderlistpageState extends State<Orderlistpage> {
         print("🟢 주문 감지됨, 공정 시작으로 업데이트");
 
         final doc = waiting.docs.first;
+        final data = doc.data();
+        final product = data['product'];
+        final type = product.toString().replaceAll('제품군', '');
+        final code = productCode[type];
+
         await orders.doc(doc.id).update({
           'status': '공정 중',
           'processingStarted': now,
         });
 
+        // ✅ 공정 시작 즉시 D2000 값 먼저 전송
+        if (code != null) {
+          try {
+            final response = await http.post(
+              Uri.parse("${Global.serverUrl}/set_word"),
+              headers: {"Content-Type": "application/json"},
+              body: jsonEncode({"address": "D2000", "value": code}),
+            );
+            print("✅ [공정 시작 시] D2000 = $code 전송됨: ${response.body}");
+          } catch (e) {
+            print("❌ [공정 시작 시] D2000 전송 실패: $e");
+          }
+        }
+
+        // 🔽 그 다음에 M900으로 신호 보냄
         try {
           final response = await http.post(
             Uri.parse("${Global.serverUrl}/set_bit"),
             headers: {"Content-Type": "application/json"},
-            body: jsonEncode({"address": "M0", "value": 1}),
+            body: jsonEncode({"address": "M900", "value": 1}),
           );
-          print('📤 M0 ON 요청 완료: ${response.body}');
+          print('📤 M900 ON 요청 완료: ${response.body}');
 
-          // 4초 후 자동 OFF
           Future.delayed(Duration(seconds: 6), () async {
             try {
               final offResponse = await http.post(
                 Uri.parse("${Global.serverUrl}/set_bit"),
                 headers: {"Content-Type": "application/json"},
-                body: jsonEncode({"address": "M0", "value": 0}),
+                body: jsonEncode({"address": "M900", "value": 0}),
               );
-              print('📴 M0 OFF 요청 완료: ${offResponse.body}');
+              print('📴 M900 OFF 요청 완료: ${offResponse.body}');
             } catch (e) {
-              print("❌ M0 OFF 실패: $e");
+              print("❌ M900 OFF 실패: $e");
             }
           });
         } catch (e) {
-          print("❌ M0 전송 실패: $e");
+          print("❌ M900 전송 실패: $e");
         }
       }
     });

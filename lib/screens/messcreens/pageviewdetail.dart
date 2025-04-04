@@ -158,7 +158,7 @@ class _PageViewDetailState extends State<PageViewDetail> {
                           child: SizedBox(
                             child: MBitVideoPlayer(
                               videoPath: 'assets/animation/conveyor-belt.mp4',
-                              isActive: mBits[0], // M상태와 연결
+                              isActive: mBits[3], // M상태와 연결
                               rotation: 180, // 회전
                               flipX: false, // 좌우반전 적용
                             ),
@@ -178,7 +178,7 @@ class _PageViewDetailState extends State<PageViewDetail> {
                           child: SizedBox(
                             child: MBitVideoPlayer(
                               videoPath: 'assets/animation/conveyor-belt.mp4',
-                              isActive: mBits[3], // M상태와 연결
+                              isActive: mBits[381], // M상태와 연결
                               rotation: 180, // 회전
                               flipX: false, // 좌우반전 적용
                             ),
@@ -208,7 +208,7 @@ class _PageViewDetailState extends State<PageViewDetail> {
                           child: SizedBox(
                             child: MBitVideoPlayer(
                               videoPath: 'assets/animation/conveyor-belt.mp4',
-                              isActive: mBits[4], // M상태와 연결
+                              isActive: mBits[382], // M상태와 연결
                               rotation: 180, // 회전
                               flipX: false, // 좌우반전 적용
                             ),
@@ -247,7 +247,7 @@ class _PageViewDetailState extends State<PageViewDetail> {
                           child: SizedBox(
                             child: MBitVideoPlayer(
                               videoPath: 'assets/animation/robot-arm.mp4',
-                              isActive: mBits[7], // M상태와 연결
+                              isActive: mBits[5] || mBits[6], // M상태와 연결
                               rotation: 180, // 회전
                               flipX: false, // 좌우반전 적용
                             ),

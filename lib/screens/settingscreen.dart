@@ -22,6 +22,7 @@ class _SettingScreenState extends State<SettingScreen> {
   final TextEditingController customServerController = TextEditingController();
   final TextEditingController plcIpController = TextEditingController();
   final TextEditingController plcPortController = TextEditingController();
+  final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
   @override
   void initState() {
@@ -67,102 +68,112 @@ class _SettingScreenState extends State<SettingScreen> {
   }
 
   void showMessage(String msg) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+    scaffoldMessengerKey.currentState?.clearSnackBars();
+    scaffoldMessengerKey.currentState?.showSnackBar(
+      SnackBar(content: Text(msg)),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("설정")),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView(
-          children: [
-            Text(
-              "서버 선택",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            DropdownButton<String>(
-              value: selectedServer,
-              items:
-                  serverOptions.entries.map((entry) {
-                    return DropdownMenuItem<String>(
-                      value: entry.value,
-                      child: Text(entry.key),
-                    );
-                  }).toList(),
-              onChanged: (newValue) {
-                if (newValue != null) {
-                  setState(() {
-                    selectedServer = newValue;
-                    customServerController.text = newValue;
-                  });
-                }
-              },
-            ),
-            SizedBox(height: 10),
-            TextField(
-              controller: customServerController,
-              decoration: InputDecoration(
-                labelText: "직접 입력 (예: http://192.168.0.126:5000)",
-              ),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              style: ButtonStyle(
-                elevation: WidgetStatePropertyAll(2),
-                shape: WidgetStatePropertyAll(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
+    return ScaffoldMessenger(
+      key: scaffoldMessengerKey,
+      child: Scaffold(
+        appBar: AppBar(title: Text("설정")),
+        body: Builder(
+          builder: (context) {
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ListView(
+                children: [
+                  Text(
+                    "Flask 서버 선택",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                ),
-                backgroundColor: WidgetStatePropertyAll(
-                  const Color.fromARGB(255, 107, 159, 236),
-                ),
-                foregroundColor: WidgetStatePropertyAll(Colors.white),
-              ),
-              onPressed: () {
-                Global.serverUrl = customServerController.text.trim();
-                showMessage("✅ 서버 선택 적용됨");
-                // 뒤로 안 감
-              },
-              child: Text("서버 선택 적용"),
-            ),
-            Divider(height: 40),
-            Text(
-              "PLC IP 설정",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            TextField(
-              controller: plcIpController,
-              decoration: InputDecoration(
-                labelText: "PLC IP 주소 (예: 192.168.3.250)",
-              ),
-            ),
-            SizedBox(height: 10),
-            TextField(
-              controller: plcPortController,
-              decoration: InputDecoration(labelText: "PLC 포트 (예: 2005)"),
-              keyboardType: TextInputType.number,
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              style: ButtonStyle(
-                elevation: WidgetStatePropertyAll(2),
-                shape: WidgetStatePropertyAll(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  DropdownButton<String>(
+                    value: selectedServer,
+                    items:
+                        serverOptions.entries.map((entry) {
+                          return DropdownMenuItem<String>(
+                            value: entry.value,
+                            child: Text(entry.key),
+                          );
+                        }).toList(),
+                    onChanged: (newValue) {
+                      if (newValue != null) {
+                        setState(() {
+                          selectedServer = newValue;
+                          customServerController.text = newValue;
+                        });
+                      }
+                    },
                   ),
-                ),
-                backgroundColor: WidgetStatePropertyAll(
-                  const Color.fromARGB(255, 107, 159, 236),
-                ),
-                foregroundColor: WidgetStatePropertyAll(Colors.white),
+                  SizedBox(height: 10),
+                  TextField(
+                    controller: customServerController,
+                    decoration: InputDecoration(
+                      labelText: "직접 입력 (예: http://192.168.0.126:5000)",
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      elevation: WidgetStatePropertyAll(2),
+                      shape: WidgetStatePropertyAll(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                        ),
+                      ),
+                      backgroundColor: WidgetStatePropertyAll(
+                        const Color.fromARGB(255, 107, 159, 236),
+                      ),
+                      foregroundColor: WidgetStatePropertyAll(Colors.white),
+                    ),
+                    onPressed: () {
+                      Global.serverUrl = customServerController.text.trim();
+                      showMessage("✅ 서버 선택 적용됨");
+                      // 뒤로 안 감
+                    },
+                    child: Text("서버 선택 적용"),
+                  ),
+                  Divider(height: 40),
+                  Text(
+                    "PLC IP 설정",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  TextField(
+                    controller: plcIpController,
+                    decoration: InputDecoration(
+                      labelText: "PLC IP 주소 (예: 192.168.3.250)",
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  TextField(
+                    controller: plcPortController,
+                    decoration: InputDecoration(labelText: "PLC 포트 (예: 2005)"),
+                    keyboardType: TextInputType.number,
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      elevation: WidgetStatePropertyAll(2),
+                      shape: WidgetStatePropertyAll(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                        ),
+                      ),
+                      backgroundColor: WidgetStatePropertyAll(
+                        const Color.fromARGB(255, 107, 159, 236),
+                      ),
+                      foregroundColor: WidgetStatePropertyAll(Colors.white),
+                    ),
+                    onPressed: applyPlcInfo,
+                    child: Text("PLC 설정 적용"),
+                  ),
+                ],
               ),
-              onPressed: applyPlcInfo,
-              child: Text("PLC 설정 적용"),
-            ),
-          ],
+            );
+          },
         ),
       ),
     );

@@ -15,6 +15,10 @@ class _PLCControlScreenState extends State<PLCControlScreen> {
   int d100Value = 0;
   bool isFetching = false;
   bool _isDisposed = false;
+  int? selectedMBit = 0;
+  bool selectedMBitState = false;
+  int? selectedDAddr = 2000; // 디폴트 D 주소
+  int selectedDValue = 1; // 디폴트 값
 
   List<bool> mBitStates = List.filled(11, false);
   final List<String> mBitLabels = [
@@ -48,6 +52,20 @@ class _PLCControlScreenState extends State<PLCControlScreen> {
     while (!_isDisposed) {
       await Future.wait([getMBits(), getD100()]);
       await Future.delayed(Duration(seconds: 1));
+    }
+  }
+
+  Future<void> setDValue(String address, int value) async {
+    try {
+      final response = await http.post(
+        Uri.parse("${Global.serverUrl}/set_word"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"address": address, "value": value}),
+      );
+      final responseData = jsonDecode(response.body);
+      print("✅ $address 설정 완료: ${responseData["message"]}");
+    } catch (e) {
+      print("❌ $address 설정 실패: $e");
     }
   }
 
@@ -178,6 +196,96 @@ class _PLCControlScreenState extends State<PLCControlScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
+              "M 비트 직접 제어",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Divider(),
+            SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    decoration: InputDecoration(
+                      labelText: "M 번호 입력",
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.number,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedMBit = int.tryParse(value) ?? 0;
+                      });
+                    },
+                  ),
+                ),
+                SizedBox(width: 10),
+                Text(
+                  selectedMBit != null ? "M$selectedMBit" : "M번호",
+                  style: TextStyle(fontSize: 16),
+                ),
+                Switch(
+                  value: selectedMBitState,
+                  onChanged: (val) {
+                    setState(() {
+                      selectedMBitState = val;
+                      if (selectedMBit != null) {
+                        setMBit("M$selectedMBit", val ? 1 : 0);
+                      }
+                    });
+                  },
+                ),
+              ],
+            ),
+            SizedBox(height: 25),
+            Text(
+              "D 영역 직접 제어",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Divider(),
+            SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    decoration: InputDecoration(
+                      labelText: "D 주소 입력",
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.number,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedDAddr = int.tryParse(value) ?? 2000;
+                      });
+                    },
+                  ),
+                ),
+                SizedBox(width: 10),
+                Expanded(
+                  child: TextField(
+                    decoration: InputDecoration(
+                      labelText: "값 입력",
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.number,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedDValue = int.tryParse(value) ?? 1;
+                      });
+                    },
+                  ),
+                ),
+                SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    if (selectedDAddr != null) {
+                      setDValue("D$selectedDAddr", selectedDValue);
+                    }
+                  },
+                  child: Text("전송"),
+                ),
+              ],
+            ),
+            SizedBox(height: 25),
+            Text(
               "수동제어",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
@@ -235,7 +343,7 @@ class _PLCControlScreenState extends State<PLCControlScreen> {
                               style: TextStyle(color: Colors.red),
                             ),
                             onPressed: () {
-                              setMBit("M10", 1); // M10 비트에 1 쓰기
+                              setMBit("M16", 1); 
                               Navigator.pop(context);
                             },
                           ),
@@ -247,31 +355,6 @@ class _PLCControlScreenState extends State<PLCControlScreen> {
                 "긴급 정지",
                 style: TextStyle(fontSize: 16, color: Colors.white),
               ),
-            ),
-            SizedBox(height: 10),
-            Text(
-              "📏 D100 제어",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            Divider(),
-            SizedBox(height: 10),
-            Text("현재 D100 값: $d100Value", style: TextStyle(fontSize: 20)),
-            SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
-                int newValue = d100Value + 10;
-                setD100(newValue);
-                setState(() => d100Value = newValue);
-              },
-              child: Text("D100 +10"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                int newValue = d100Value - 10;
-                setD100(newValue);
-                setState(() => d100Value = newValue);
-              },
-              child: Text("D100 -10"),
             ),
           ],
         ),

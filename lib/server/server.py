@@ -90,7 +90,6 @@ def update_m_bit_cache_thread():
                 temp_cache.extend([int(v) for v in values])
             plc.close()
             m_bit_cache = temp_cache
-            print("✅ M 비트 캐시 업데이트 완료")
         except Exception as e:
             print(f"❌ M 비트 캐시 업데이트 실패: {e}")
         time.sleep(1)  # 1초에 한 번 갱신
