@@ -22,8 +22,7 @@ class _OrderlistpageState extends State<Orderlistpage> {
   final orders = FirebaseFirestore.instance.collection('orders');
   final processTime = {'A': 10, 'B': 12, 'C': 15};
   final Map<String, int> productCode = {'A': 1, 'B': 2, 'C': 3};
-  final current_Quantity = 0;
-  final quantity = 0;
+
   @override
   void initState() {
     super.initState();
@@ -118,7 +117,7 @@ class _OrderlistpageState extends State<Orderlistpage> {
           );
           print('📤 M900 ON 요청 완료: ${response.body}');
 
-          Future.delayed(Duration(seconds: 6), () async {
+          Future.delayed(Duration(seconds: 4), () async {
             try {
               final offResponse = await http.post(
                 Uri.parse("${Global.serverUrl}/set_bit"),
