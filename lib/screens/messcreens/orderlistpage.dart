@@ -22,14 +22,14 @@ class _OrderlistpageState extends State<Orderlistpage> {
   final orders = FirebaseFirestore.instance.collection('orders');
   final processTime = {'A': 10, 'B': 12, 'C': 15};
   final Map<String, int> productCode = {'A': 1, 'B': 2, 'C': 3};
-
+  final current_Quantity = 0;
+  final quantity = 0;
   @override
   void initState() {
     super.initState();
 
     Timer.periodic(Duration(seconds: 1), (timer) async {
       final now = DateTime.now();
-
       final processing =
           await orders
               .where('status', isEqualTo: '공정 중')
@@ -43,14 +43,11 @@ class _OrderlistpageState extends State<Orderlistpage> {
         final started = (data['processingStarted'] as Timestamp?)?.toDate();
         final product = data['product'];
         final quantity = data['quantity'];
-
         if (started == null || product == null || quantity == null) return;
 
         final type = product.toString().replaceAll('제품군', '');
         final seconds = processTime[type]! * quantity;
         final elapsed = now.difference(started).inSeconds;
-
-        // 🔽 여기 추가: D2000 자동 전송
         final code = productCode[type];
         if (code != null) {
           try {
@@ -98,6 +95,7 @@ class _OrderlistpageState extends State<Orderlistpage> {
         });
 
         // ✅ 공정 시작 즉시 D2000 값 먼저 전송
+
         if (code != null) {
           try {
             final response = await http.post(
@@ -422,6 +420,3 @@ class _OrderlistpageState extends State<Orderlistpage> {
     );
   }
 }
-
-//주문 하나 들어갔을때 PLC랑 연동해서 1개만 들어가도록 한번해볼까..? 제품군과 주문추가
-//눌렸을때
