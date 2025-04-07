@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:vision_flutter/globals/serverurl.dart';
 import 'package:vision_flutter/screens/messcreens/processinfotab.dart';
 import 'package:vision_flutter/screens/messcreens/processdetail.dart';
-import 'package:vision_flutter/screens/messcreens/processpageview1.dart';
+import 'package:vision_flutter/screens/messcreens/processpageview.dart';
 import 'dart:async';
 import 'package:vision_flutter/widgets/remainingtime.dart';
 import 'package:http/http.dart' as http;
