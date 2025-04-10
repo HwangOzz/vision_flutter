@@ -92,7 +92,7 @@ def update_m_bit_cache_thread():
             m_bit_cache = temp_cache
         except Exception as e:
             print(f"❌ M 비트 캐시 업데이트 실패: {e}")
-        time.sleep(1)  # 1초에 한 번 갱신
+        time.sleep(0.5)  # 1초에 한 번 갱신
 
 @app.route("/set_plc_info", methods=["POST"])
 def set_plc_info():

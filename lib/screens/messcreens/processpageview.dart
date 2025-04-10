@@ -11,10 +11,10 @@ class ProcessSimulationPage extends StatefulWidget {
 }
 
 class _ProcessSimulationPageState extends State<ProcessSimulationPage> {
-  List<bool> mBits = List.filled(10, false); // M0 ~ M9 상태 저장
+  List<bool> mBits = List.filled(1000, false); // M0 ~ M9 상태 저장
   bool isFetching = false; // 상태 요청 중 여부
-  List<bool> mBitsCompleted = List.filled(10, false);
   bool _isDisposed = false;
+  List<bool> mBitsCompleted = List.filled(1000, false);
 
   @override
   void initState() {
@@ -35,32 +35,38 @@ class _ProcessSimulationPageState extends State<ProcessSimulationPage> {
 
     try {
       final response = await http.get(
-        Uri.parse("${Global.serverUrl}/get_m_bits"),
+        Uri.parse("${Global.serverUrl}/get_m_bits?start=0&count=1000"),
       );
-      final data = jsonDecode(response.body);
 
-      if (!mounted) return; // <- 여기서 먼저 체크!
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
 
-      setState(() {
-        for (int i = 0; i < 10; i++) {
-          bool currentState = data["M$i"] == 1;
-          mBits[i] = currentState;
-          if (currentState) {
-            mBitsCompleted[i] = true;
+        if (!mounted) return;
 
-            // ✅ 현재 켜진 M 비트보다 앞에 있는 비트들도 자동 완료 처리
-            for (int j = 0; j < i; j++) {
-              mBitsCompleted[j] = true;
+        setState(() {
+          for (int i = 0; i < 1000; i++) {
+            final key = "M$i";
+            // fetchMBitStates 내부에서 누적 저장
+            if (data.containsKey(key)) {
+              final isOn = data[key] == 1;
+              mBits[i] = isOn;
+              if (isOn) {
+                mBitsCompleted[i] = true; // ✅ 누적
+              }
             }
           }
-        }
-
-        // ✅ M9 들어오면 초기화
-        if (data["M9"] == 1) {
-          mBitsCompleted = List.filled(10, false);
-          print("🔁 M9 감지됨 → 공정 초기화됨");
-        }
-      });
+          // ✅ true인 비트만 로그 출력
+          final activeBits = <int>[];
+          for (int i = 0; i < mBits.length; i++) {
+            if (mBits[i]) {
+              activeBits.add(i);
+            }
+          }
+          print("✅ 현재 활성화된 M 비트: $activeBits");
+        });
+      } else {
+        print("❌ 서버 응답 오류: ${response.statusCode}");
+      }
     } catch (e) {
       print("❌ M 비트 상태 조회 실패: $e");
     }
@@ -71,24 +77,32 @@ class _ProcessSimulationPageState extends State<ProcessSimulationPage> {
     }
   }
 
-  double _getProgressForRange(int start, int end) {
-    int total = end - start + 1;
-    int active =
-        mBitsCompleted.sublist(start, end + 1).where((bit) => bit).length;
-    return active / total;
-  }
+  Widget _buildProcessCardGrouped(
+    String title,
+    List<List<int>> combinations,
+    int groupIndex,
+  ) {
+    double bestProgress = 0.0;
+    String bestStatus = "대기 중";
 
-  String _getStatusForRange(int start, int end) {
-    int active =
-        mBitsCompleted.sublist(start, end + 1).where((bit) => bit).length;
-    if (active == 0) return "대기 중";
-    if (active < (end - start + 1)) return "진행 중";
-    return "완료";
-  }
+    for (final group in combinations) {
+      final total = group.length;
+      // 진행률 계산할 때는 이걸로
+      final active = group.where((i) => mBitsCompleted[i]).length;
 
-  Widget _buildProcessCard(String title, int start, int end) {
-    double progress = _getProgressForRange(start, end);
-    String status = _getStatusForRange(start, end);
+      final progress = active / total;
+
+      if (progress == 1.0) {
+        bestProgress = 1.0;
+        bestStatus = "완료";
+        break; // 더 볼 필요 없음
+      }
+
+      if (progress > bestProgress) {
+        bestProgress = progress;
+        bestStatus = "진행 중";
+      }
+    }
 
     return Card(
       margin: EdgeInsets.symmetric(vertical: 8),
@@ -97,9 +111,9 @@ class _ProcessSimulationPageState extends State<ProcessSimulationPage> {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            LinearProgressIndicator(value: progress),
+            LinearProgressIndicator(value: bestProgress),
             SizedBox(height: 4),
-            Text("상태: $status"),
+            Text("상태: $bestStatus (${(bestProgress * 100).toInt()}%)"),
           ],
         ),
       ),
@@ -113,9 +127,24 @@ class _ProcessSimulationPageState extends State<ProcessSimulationPage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            _buildProcessCard("1. 제품 조립 (M0~M3)", 0, 3),
-            _buildProcessCard("2. 비전센서 검사 (M4~M6)", 4, 6),
-            _buildProcessCard("3. 물품 보관 (M7~M9)", 7, 8),
+            _buildProcessCardGrouped("1. 제품 조립", [
+              [0, 1, 2, 20],
+              [0, 90, 92, 21],
+              [0, 91, 93, 22],
+            ], 0),
+
+            _buildProcessCardGrouped("2. 비전센서 검사", [
+              [3, 20],
+              [3, 21],
+              [3, 22],
+            ], 1),
+
+            _buildProcessCardGrouped("3. 물품 보관", [
+              [4, 5, 6],
+              [4, 94, 96],
+              [4, 95, 97],
+            ], 2),
+
             SizedBox(height: 32),
             Text(
               "※ 실시간으로 PLC 상태를 반영합니다",

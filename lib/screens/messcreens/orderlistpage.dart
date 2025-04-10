@@ -117,20 +117,35 @@ class _OrderlistpageState extends State<Orderlistpage> {
           );
           print('📤 M900 ON 요청 완료: ${response.body}');
 
-          Future.delayed(Duration(seconds: 4), () async {
-            try {
-              final offResponse = await http.post(
-                Uri.parse("${Global.serverUrl}/set_bit"),
-                headers: {"Content-Type": "application/json"},
-                body: jsonEncode({"address": "M900", "value": 0}),
-              );
-              print('📴 M900 OFF 요청 완료: ${offResponse.body}');
-            } catch (e) {
-              print("❌ M900 OFF 실패: $e");
+          // ✅ 2초 후 OFF 시도 + 재시도 최대 3번
+          Future.delayed(Duration(seconds: 2), () async {
+            int retryCount = 0;
+            bool success = false;
+
+            while (!success && retryCount < 3) {
+              try {
+                final offResponse = await http.post(
+                  Uri.parse("${Global.serverUrl}/set_bit"),
+                  headers: {"Content-Type": "application/json"},
+                  body: jsonEncode({"address": "M900", "value": 0}),
+                );
+                print('📴 M900 OFF 요청 완료: ${offResponse.body}');
+                success = true;
+              } catch (e) {
+                retryCount++;
+                print("❌ M900 OFF 실패 ($retryCount회차): $e");
+                if (retryCount < 3) {
+                  await Future.delayed(Duration(seconds: 2)); // 다음 재시도까지 2초 대기
+                }
+              }
+            }
+
+            if (!success) {
+              print("🚨 M900 OFF 최종 실패. 수동 확인 필요.");
             }
           });
         } catch (e) {
-          print("❌ M900 전송 실패: $e");
+          print("❌ M900 ON 전송 실패: $e");
         }
       }
     });
